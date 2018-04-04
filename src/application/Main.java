@@ -26,6 +26,7 @@ public class Main extends Application {
 	
 	public static final int START_WIDTH = 512;
 	public static final int START_HEIGHT = 512;
+	public static final float NANO_SEC = 1000000000f;
 	public static final double TARGET_FPS = 60;
 	public static final double UPDATE_RATE = 30;
 	public static final double FRAME_DISPLAY_RATE = 10;
@@ -47,8 +48,8 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle(APP_NAME);
 
-		lastFrame = System.currentTimeMillis();
-		lastUpdate = System.currentTimeMillis(); 
+		lastFrame = System.nanoTime();
+		lastUpdate = System.nanoTime(); 
 		
 		initEntities();
 		
@@ -76,9 +77,9 @@ public class Main extends Application {
             {
                 public void handle(ActionEvent ae)
                 {
-                	frameDelta = (System.currentTimeMillis() - lastFrame) / 1000f;
+                	frameDelta = (System.nanoTime() - lastFrame) / NANO_SEC;
                     render(gc, frameDelta);
-                    lastFrame = System.currentTimeMillis();
+                    lastFrame = System.nanoTime();
                 }
             });
         
@@ -89,9 +90,9 @@ public class Main extends Application {
                 {
                     public void handle(ActionEvent ae)
                     {
-                    	updateDelta = (System.currentTimeMillis() - lastUpdate) / 1000f;
+                    	updateDelta = (System.nanoTime() - lastUpdate) / NANO_SEC;
                         update(updateDelta);
-                    	lastUpdate = System.currentTimeMillis(); 
+                    	lastUpdate = System.nanoTime(); 
                     	
                     	primaryStage.setTitle(String.format("%s %f (%f)", APP_NAME, (1f / frameDelta), (1f / updateDelta)));
                     }
@@ -113,7 +114,7 @@ public class Main extends Application {
 		
 		Random rand = new Random();
 		
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < 1000; i++) {
 			entities.add(new CircleEntity(new Vector2(rand.nextFloat() * START_WIDTH, rand.nextFloat() * START_HEIGHT), rand.nextFloat() * 100f));
 		}
 	}

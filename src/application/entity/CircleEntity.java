@@ -5,6 +5,8 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class CircleEntity extends Entity {
 
+	private static float speed = 20;
+	
 	private float radius;
 	
 	public CircleEntity(Vector2 position, float radius) {
@@ -14,8 +16,7 @@ public class CircleEntity extends Entity {
 
 	@Override
 	public void update(float delta) {
-		// TODO Auto-generated method stub
-
+		position.setX(position.getX() + speed * delta);
 	}
 
 	@Override
