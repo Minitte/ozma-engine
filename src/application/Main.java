@@ -1,15 +1,5 @@
 package application;
 	
-import javafx.application.Application;
-import javafx.stage.Stage;
-import javafx.scene.Scene;
-import javafx.scene.Group;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.animation.Timeline;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -18,9 +8,17 @@ import application.entity.CircleEntity;
 import application.entity.Entity;
 import application.math.Vector2;
 import javafx.animation.KeyFrame;
-import javafx.util.Duration;
-import javafx.event.EventHandler;
+import javafx.animation.Timeline;
+import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class Main extends Application {
 	
@@ -54,6 +52,7 @@ public class Main extends Application {
 		initEntities();
 		
 		// javafx node stuff
+		primaryStage.setResizable(false);
         Group root = new Group();
         Scene theScene = new Scene( root );
         primaryStage.setScene( theScene );
