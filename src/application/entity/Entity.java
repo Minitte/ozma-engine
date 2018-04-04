@@ -8,7 +8,12 @@ import javafx.scene.canvas.GraphicsContext;
 
 public abstract class Entity {
 	
-	private Vector2 position;
+	protected Vector2 position;
+
+	public Entity(Vector2 position) {
+		super();
+		this.position = position;
+	}
 
 	/**
 	 * @return the position
