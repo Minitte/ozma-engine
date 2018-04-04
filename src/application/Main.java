@@ -7,6 +7,7 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
 import javafx.util.Duration;
@@ -35,6 +36,9 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle(APP_NAME);
 
+		lastFrame = System.currentTimeMillis();
+		lastUpdate = System.currentTimeMillis(); 
+		
 		// javafx node stuff
         Group root = new Group();
         Scene theScene = new Scene( root );
@@ -50,7 +54,6 @@ public class Main extends Application {
         gameLoop.setCycleCount( Timeline.INDEFINITE );
         
         // render keyframe loop
-        lastFrame = System.currentTimeMillis();
         KeyFrame kfRender = new KeyFrame(
             Duration.seconds(1.0/TARGET_FPS), // target FPS
             new EventHandler<ActionEvent>()
@@ -64,14 +67,13 @@ public class Main extends Application {
             });
         
         // update keyframe loop
-        lastUpdate = System.currentTimeMillis(); 
         KeyFrame kfUpdate = new KeyFrame(
                 Duration.seconds(1.0/UPDATE_RATE), // game loop update rate
                 new EventHandler<ActionEvent>()
                 {
                     public void handle(ActionEvent ae)
                     {
-                    	updateDelta =  - lastUpdate;
+                    	updateDelta = System.currentTimeMillis() - lastUpdate;
                         update(updateDelta);
                     	lastUpdate = System.currentTimeMillis(); 
                     }
@@ -113,8 +115,23 @@ public class Main extends Application {
 		gc.setStroke(Color.BLACK);
 		
 		// outline / stroke width
-		gc.setLineWidth(5);
+		gc.setLineWidth(12);
 		
-		gc.fillRect(10, 10, 30, 30);
+		//gc.fillRect(10, 10, 30, 30);
+		
+		// draw fps
+		gc.setFill(Color.YELLOW);
+		gc.setFont(new Font("Arial", 24));
+		
+		// fps
+		if (frameDelta == 0) {
+			frameDelta = 1;
+		}
+		
+		if (updateDelta == 0) {
+			updateDelta = 1;
+		}
+	
+		gc.fillText(String.format("%d (%d)", 1000/frameDelta, 1000/updateDelta) , 0, 24);
 	}
 }
