@@ -1,15 +1,19 @@
 package application.entity;
 
-import java.util.Vector;
-
 import application.math.Vector2;
-import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 
 public abstract class Entity {
 	
+	/**
+	 * A xy vector representing the position of the center of the entity 
+	 */
 	protected Vector2 position;
 
+	/**
+	 * Constructor for an entity
+	 * @param position
+	 */
 	public Entity(Vector2 position) {
 		super();
 		this.position = position;
@@ -40,11 +44,6 @@ public abstract class Entity {
 	 */
 	public void setPosition(Vector2 position) {
 		this.position = position;
-	}
-
-	public void setPosition(float x, float y) {
-		position.setX(x);
-		position.setY(y);
 	}
 	
 }
