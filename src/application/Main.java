@@ -156,8 +156,12 @@ public class Main extends Application {
 			@Override
 			public void handle(MouseEvent e) {
 				if (selected != null) {
-					selected.setPosition(new Vector2((float) e.getX(), (float) e.getY()));
-					selected.setVelocity(new Vector2(0, 0));
+					Vector2 mouseVector = new Vector2((float) e.getX(), (float) e.getY());
+					Vector2 mouseVelocity = mouseVector.clone();
+					mouseVelocity.minus(selected.getPosition());
+					mouseVelocity.linearMutliply(10f);
+					selected.setPosition(mouseVector);
+					selected.setVelocity(mouseVelocity);
 				}
 				
 			}
