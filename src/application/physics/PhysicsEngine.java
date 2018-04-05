@@ -53,8 +53,8 @@ public class PhysicsEngine {
 		rv.minus(a.getVelocity());
 		
 		// relative velocity in normal direction
-		Vector2 normalRV = rv.getNormal();
-		float velAlongNormal = rv.dot(normalRV);
+		Vector2 normal = cm.getNormal();
+		float velAlongNormal = rv.dot(normal);
 		
 		// do nothing for separating directions
 		if (velAlongNormal > 0f) {
@@ -69,10 +69,10 @@ public class PhysicsEngine {
 		
 		// impulse scalar
 		float j = -(1f + e) * velAlongNormal;
-		j /= 1f / aProperties.getMass() + 1f / bProperties.getMass();
+		j /= aProperties.getInvMass() + bProperties.getInvMass();
 		
 		// apply impulse
-		Vector2 impulseA = normalRV.clone();
+		Vector2 impulseA = normal.clone();
 		impulseA.linearMutliply(j);
 		
 		Vector2 impulseB = impulseA.clone();
