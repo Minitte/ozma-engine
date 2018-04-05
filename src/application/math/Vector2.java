@@ -41,6 +41,15 @@ public class Vector2 {
 	}
 	
 	/**
+	 * Minus another vector to this vector
+	 * @param other
+	 */
+	public void minus(Vector2 other) {
+		x -= other.x;
+		y -= other.y;
+	}
+	
+	/**
 	 * multiplies both x and y with the given scale factor
 	 * @param scale
 	 * @return
