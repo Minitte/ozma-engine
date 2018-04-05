@@ -28,6 +28,9 @@ public class PhysicsEngine {
 		this.entities = entities;
 	}
 	
+	/**
+	 * Performs collision checks and resolves them
+	 */
 	public void update() {
 		for (int i = 0; i < entities.size(); i++) {
 			CircleEntity a = (CircleEntity)entities.get(i);
@@ -37,12 +40,16 @@ public class PhysicsEngine {
 				if (a.checkCollision(b)) {
 					CollisionManifold m = new CollisionManifold(a, b);
 					resolveCollision(m);
-					correctPosition(m);
+					positionCorrection(m);
 				}
 			}
 		}
 	}
 
+	/**
+	 * Resolves collision between two entities
+	 * @param cm
+	 */
 	public void resolveCollision(CollisionManifold cm) {
 		
 		CircleEntity a = cm.getEntityA();
@@ -84,8 +91,22 @@ public class PhysicsEngine {
 		b.getVelocity().add(impulseB);
 	}
 	
-	private void correctPosition(CollisionManifold cm) {
-		// TODO
+	/**
+	 * Counter acts object sinking due to floating point errors
+	 * @param cm
+	 */
+	private void positionCorrection(CollisionManifold cm) {
+		float correctionMult = max(cm.getPenDepth() - CORRECTION_SLOP, 0.0f) * CORRECTION_PERCENT;
+		Vector2 correctionVectorA = cm.getNormal().clone();
+		correctionVectorA.linearMutliply(correctionMult);
+		
+		Vector2 correctionVectorB = correctionVectorA.clone();
+		
+		correctionVectorA.linearMutliply(cm.getEntityA().getPhyProperties().getInvMass());
+		correctionVectorB.linearMutliply(cm.getEntityB().getPhyProperties().getInvMass());
+		
+		cm.getEntityA().getPosition().minus(correctionVectorA);
+		cm.getEntityB().getPosition().add(correctionVectorB);
 	}
 	
 	/**
