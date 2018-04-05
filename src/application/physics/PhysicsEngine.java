@@ -4,6 +4,7 @@
 package application.physics;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import application.entity.CircleEntity;
 import application.entity.Entity;
@@ -44,6 +45,28 @@ public class PhysicsEngine {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Performs collision checks and resolves them
+	 */
+	public void updateParallel() {
+		
+		IntStream intStream = IntStream.range(0, entities.size());
+		
+		intStream.parallel().forEach(i -> {
+			CircleEntity a = (CircleEntity)entities.get(i);
+			for (int j = i + 1; j < entities.size(); j++) {
+				CircleEntity b = (CircleEntity)entities.get(j);
+				
+				if (a.checkCollision(b)) {
+					CollisionManifold m = new CollisionManifold(a, b);
+					resolveCollision(m);
+					positionCorrection(m);
+				}
+			}
+			
+		});
 	}
 
 	/**

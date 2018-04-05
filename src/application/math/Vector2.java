@@ -122,6 +122,16 @@ public class Vector2 {
 	}
 	
 	/**
+	 * makes the length to 1
+	 * @return
+	 */
+	public void Normalize() {
+		float len = getLength();
+		
+		linearDivide(len);
+	}
+	
+	/**
 	 * the length of the vector by calculating the hypotenuse
 	 * @return
 	 */

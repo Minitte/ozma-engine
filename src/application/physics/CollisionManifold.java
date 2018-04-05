@@ -32,7 +32,8 @@ public class CollisionManifold {
 		float sum = entityA.getRadius() + entityB.getRadius();
 		penDepth = sum - v.getLength();
 
-		normal = v.getNormal();
+		v.Normalize();
+		normal = v;
 	}
 
 	/**

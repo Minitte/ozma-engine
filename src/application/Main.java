@@ -23,8 +23,8 @@ import javafx.util.Duration;
 
 public class Main extends Application {
 
-	public static final int START_WIDTH = 512;
-	public static final int START_HEIGHT = 512;
+	public static final int START_WIDTH = 1280;
+	public static final int START_HEIGHT = 720;
 	public static final float NANO_SEC = 1000000000f;
 	public static final double TARGET_FPS = 60;
 	public static final double UPDATE_RATE = 30;
@@ -174,7 +174,7 @@ public class Main extends Application {
 
 		Random rand = new Random();
 
-		 for (int i = 0; i < 2; i++) {
+		 for (int i = 0; i < 300; i++) {
 		 entities.add(new CircleEntity(new Vector2(rand.nextFloat() * START_WIDTH,
 		 rand.nextFloat() * START_HEIGHT), rand.nextFloat() * 100f));
 		 }
@@ -193,7 +193,8 @@ public class Main extends Application {
 			e.update(delta);
 		}
 
-		phyEngine.update();
+//		phyEngine.update();
+		phyEngine.updateParallel();
 	}
 
 	/**

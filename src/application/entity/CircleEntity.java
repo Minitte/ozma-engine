@@ -22,7 +22,7 @@ public class CircleEntity extends Entity {
 		float area = radius;
 		area *= area;
 		area *= (float)Math.PI;
-		phyProperties = new PhysicsProperties(area * density, 1);
+		phyProperties = new PhysicsProperties(5, 1);
 		phyProperties.setVelocityDamping(1.0f);
 	}
 	
