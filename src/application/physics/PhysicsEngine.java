@@ -3,7 +3,10 @@
  */
 package application.physics;
 
+import java.util.List;
+
 import application.entity.CircleEntity;
+import application.entity.Entity;
 import application.math.Vector2;
 
 /**
@@ -12,14 +15,45 @@ import application.math.Vector2;
  */
 public class PhysicsEngine {
 	
+	private static final float CORRECTION_PERCENT = 0.2f;
+	private static final float CORRECTION_SLOP = 0.01f;
 	
-	public void resolveCollision(CircleEntity a, CircleEntity b) {
+	private List<Entity> entities;
+	
+	/**
+	 * @param entities
+	 */
+	public PhysicsEngine(List<Entity> entities) {
+		super();
+		this.entities = entities;
+	}
+	
+	public void update() {
+		for (int i = 0; i < entities.size(); i++) {
+			CircleEntity a = (CircleEntity)entities.get(i);
+			for (int j = i + 1; j < entities.size(); j++) {
+				CircleEntity b = (CircleEntity)entities.get(j);
+				
+				if (a.checkCollision(b)) {
+					CollisionManifold m = new CollisionManifold(a, b);
+					resolveCollision(m);
+					correctPosition(m);
+				}
+			}
+		}
+	}
+
+	public void resolveCollision(CollisionManifold cm) {
+		
+		CircleEntity a = cm.getEntityA();
+		CircleEntity b = cm.getEntityB();
+		
 		// relative velocity
 		Vector2 rv = b.getVelocity().clone();
 		rv.minus(a.getVelocity());
 		
 		// relative velocity in normal direction
-		Vector2 normalRV = new Vector2(-rv.getY(), rv.getX());
+		Vector2 normalRV = rv.getNormal();
 		float velAlongNormal = rv.dot(normalRV);
 		
 		// do nothing for separating directions
@@ -43,11 +77,15 @@ public class PhysicsEngine {
 		
 		Vector2 impulseB = impulseA.clone();
 		
-		impulseA.linearMutliply(1f / aProperties.getMass());
-		impulseB.linearMutliply(1f / bProperties.getMass());
+		impulseA.linearMutliply(aProperties.getInvMass());
+		impulseB.linearMutliply(bProperties.getInvMass());
 		
 		a.getVelocity().minus(impulseA);
 		b.getVelocity().add(impulseB);
+	}
+	
+	private void correctPosition(CollisionManifold cm) {
+		// TODO
 	}
 	
 	/**
@@ -58,5 +96,15 @@ public class PhysicsEngine {
 	 */
 	private float min(float a, float b) {
 		return a <= b ? a : b;
+	}
+	
+	/**
+	 * Returns the larger value of the given
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	private float max(float a, float b) {
+		return a >= b ? a : b;
 	}
 }

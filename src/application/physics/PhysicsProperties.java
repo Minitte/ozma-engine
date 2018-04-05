@@ -8,6 +8,7 @@ package application.physics;
  *
  */
 public class PhysicsProperties {
+	private float invMass;
 	private float mass;
 	private float restitution;
 
@@ -18,6 +19,7 @@ public class PhysicsProperties {
 	public PhysicsProperties(float mass, float restitutionl) {
 		super();
 		this.mass = mass;
+		invMass = 1f / mass;
 		this.restitution = restitutionl;
 	}
 
@@ -29,11 +31,18 @@ public class PhysicsProperties {
 	}
 
 	/**
-	 * @param mass
-	 *            the mass to set
+	 * @param mass the mass to set
 	 */
 	public void setMass(float mass) {
 		this.mass = mass;
+		invMass = 1f / mass;
+	}
+
+	/**
+	 * @return the invMass
+	 */
+	public float getInvMass() {
+		return invMass;
 	}
 
 	/**
