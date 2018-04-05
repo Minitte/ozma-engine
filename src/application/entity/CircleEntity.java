@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 
 public class CircleEntity extends Entity {
 	
-	private static float density = 1;
+	private static float density = 0.0001f;
 	
 	private float radius;
 	private float boxRadius;
@@ -22,7 +22,7 @@ public class CircleEntity extends Entity {
 		float area = radius;
 		area *= area;
 		area *= (float)Math.PI;
-		phyProperties = new PhysicsProperties(5, 1);
+		phyProperties = new PhysicsProperties(area * density, 1);
 		phyProperties.setVelocityDamping(1.0f);
 	}
 	
