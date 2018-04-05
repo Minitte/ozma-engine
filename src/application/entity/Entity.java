@@ -9,6 +9,11 @@ public abstract class Entity {
 	 * A xy vector representing the position of the center of the entity 
 	 */
 	protected Vector2 position;
+	
+	/**
+	 * A xy vector representing the velocity that this object has
+	 */
+	protected Vector2 velocity;
 
 	/**
 	 * Constructor for an entity
@@ -17,13 +22,7 @@ public abstract class Entity {
 	public Entity(Vector2 position) {
 		super();
 		this.position = position;
-	}
-
-	/**
-	 * @return the position
-	 */
-	public Vector2 getPosition() {
-		return position;
+		velocity = new Vector2();
 	}
 
 	/**
@@ -38,6 +37,13 @@ public abstract class Entity {
 	 * @param delta
 	 */
 	public abstract void render(GraphicsContext gc, float delta);
+	
+	/**
+	 * @return the position
+	 */
+	public Vector2 getPosition() {
+		return position;
+	}
 
 	/**
 	 * @param position the position to set
@@ -45,5 +51,21 @@ public abstract class Entity {
 	public void setPosition(Vector2 position) {
 		this.position = position;
 	}
+
+	/**
+	 * @return the velocity
+	 */
+	public Vector2 getVelocity() {
+		return velocity;
+	}
+
+	/**
+	 * @param velocity the velocity to set
+	 */
+	public void setVelocity(Vector2 velocity) {
+		this.velocity = velocity;
+	}
+	
+	
 	
 }
