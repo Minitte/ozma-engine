@@ -11,6 +11,7 @@ public class PhysicsProperties {
 	private float invMass;
 	private float mass;
 	private float restitution;
+	private float velocityDamping;
 
 	/**
 	 * @param mass
@@ -58,5 +59,21 @@ public class PhysicsProperties {
 	public void setRestitution(float restitution) {
 		this.restitution = restitution;
 	}
+
+	/**
+	 * @return the velocityDamping
+	 */
+	public float getVelocityDamping() {
+		return velocityDamping;
+	}
+
+	/**
+	 * @param velocityDamping the velocityDamping to set
+	 */
+	public void setVelocityDamping(float velocityDamping) {
+		this.velocityDamping = velocityDamping;
+	}
+	
+	
 
 }

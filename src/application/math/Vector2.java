@@ -50,6 +50,26 @@ public class Vector2 {
 	}
 	
 	/**
+	 * Reduces x and y by the amount of x and y of other. 
+	 * The reduction is in the direction of zero if values are positive.
+	 * Negatives will have an opposite effect of getting further away from zero
+	 * @param other 
+	 */
+	public void reduce(Vector2 other) {
+		if (x > 0) {
+			x -= other.x;
+		} else if (x < 0) {
+			x += other.x;
+		}
+		
+		if (y > 0) {
+			y -= other.y;
+		} else if (y < 0) {
+			y += other.y;
+		}
+	}
+	
+	/**
 	 * multiplies both x and y with the given scale factor
 	 * @param scale
 	 * @return

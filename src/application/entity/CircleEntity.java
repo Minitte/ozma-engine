@@ -23,6 +23,7 @@ public class CircleEntity extends Entity {
 		area *= area;
 		area *= (float)Math.PI;
 		phyProperties = new PhysicsProperties(area * density, 1);
+		phyProperties.setVelocityDamping(1.0f);
 	}
 	
 	/**
@@ -60,6 +61,11 @@ public class CircleEntity extends Entity {
 		Vector2 scaledVelocity = velocity.clone();
 		scaledVelocity.linearMutliply(delta);
 		position.add(scaledVelocity);
+		
+		// apply damping effects
+		Vector2 dampingVector = new Vector2(phyProperties.getVelocityDamping(), phyProperties.getVelocityDamping());
+		dampingVector.linearMutliply(delta);
+		velocity.reduce(dampingVector);
 	}
 
 	@Override
