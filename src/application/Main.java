@@ -33,9 +33,12 @@ public class Main extends Application {
 
 	private float updateDelta, frameDelta;
 	private long lastFrame, lastUpdate;
+	
 	private List<Entity> entities;
-	private Entity selected;
 	private PhysicsEngine phyEngine;
+	
+	private Entity selected;
+	private boolean mouseDown;
 
 	/**
 	 * Program entry point
@@ -113,13 +116,20 @@ public class Main extends Application {
 	}
 
 	private void initDragListener(Scene scene) {
-		scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
+		scene.setOnMousePressed(new EventHandler<MouseEvent>() {
+			
 			@Override
 			public void handle(MouseEvent e) {
+				if (mouseDown) {
+					return;
+				}
+				
+				mouseDown = true;
+				
 				Vector2 mouseVector = new Vector2((float) e.getX(), (float) e.getY());
 
 				for (Entity ent : entities) {
+					
 					CircleEntity circle = (CircleEntity) ent;
 					if (circle.checkCollision(mouseVector)) {
 						selected = circle;
@@ -128,6 +138,16 @@ public class Main extends Application {
 				}
 
 				selected = null;
+			}
+		});
+		
+		scene.setOnMouseReleased(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				mouseDown = false;
+				selected = null;
+				
 			}
 		});
 
