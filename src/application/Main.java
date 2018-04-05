@@ -206,7 +206,7 @@ public class Main extends Application {
 	 */
 	public void render(GraphicsContext gc, float delta) {
 		// Clear the canvas
-		gc.clearRect(0, 0, 512, 512);
+		gc.clearRect(0, 0, START_WIDTH, START_HEIGHT);
 
 		for (Entity e : entities) {
 			e.render(gc, delta);
