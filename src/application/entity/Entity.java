@@ -22,6 +22,7 @@ public abstract class Entity {
 	public Entity(Vector2 position) {
 		super();
 		this.position = position;
+		velocity = new Vector2();
 	}
 
 	/**
