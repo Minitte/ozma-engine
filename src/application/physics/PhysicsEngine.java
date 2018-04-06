@@ -156,11 +156,11 @@ public class PhysicsEngine {
 	 * @return
 	 */
 	public boolean checkCollision(RectangleEntity a, RectangleEntity b) {
-		if (a.getPointB().getX() < b.getPointA().getX() || a.getPointA().getX() < b.getPointB().getX()) {
+		if (a.getPointB().getX() < b.getPointA().getX() || a.getPointA().getX() > b.getPointB().getX()) {
 			return false;
 		}
 		
-		if (a.getPointB().getY() < b.getPointA().getY() || a.getPointA().getY() < b.getPointB().getY()) {
+		if (a.getPointB().getY() < b.getPointA().getY() || a.getPointA().getY() > b.getPointB().getY()) {
 			return false;
 		}
 		

@@ -51,7 +51,7 @@ public class CollisionManifold {
 		v.Normalize();
 		normal = v;
 		
-		Vector2 faceNormal = new Vector2(0f, -1f);
+		Vector2 faceNormal = normal;
 
 		// Calculate half extents along x axis for each object
 		float extentAx = (entityA.getPointB().getX() - entityA.getPointA().getX()) / 2f;
@@ -73,9 +73,9 @@ public class CollisionManifold {
 				// which is more
 				if (overlapX > overlapY) {
 					if (faceNormal.getX() < 0) {
-						normal = new Vector2(-1f, 0f);
+						//normal = new Vector2(-1f, 0f);
 					} else {
-						normal = new Vector2(0f, 0f);
+						//normal = new Vector2(0f, 0f);
 					}
 					
 					penDepth = overlapX;
@@ -83,9 +83,9 @@ public class CollisionManifold {
 					return;
 				} else {
 					if (faceNormal.getY() < 0) {
-						normal = new Vector2(0, -1);
+//						normal = new Vector2(0, -1);
 					} else {
-						normal = new Vector2(0, 1);
+//						normal = new Vector2(0, 1);
 					}
 					
 					penDepth = overlapY;

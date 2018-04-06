@@ -27,7 +27,7 @@ public class Main extends Application {
 	public static final int START_HEIGHT = 720;
 	public static final float NANO_SEC = 1000000000f;
 	public static final double TARGET_FPS = 60;
-	public static final double UPDATE_RATE = 30;
+	public static final double UPDATE_RATE = 60;
 	public static final double FRAME_DISPLAY_RATE = 10;
 	public static final String APP_NAME = "ozma engine";
 
@@ -161,6 +161,7 @@ public class Main extends Application {
 					mouseVelocity.linearMutliply(10f);
 					selected.setPosition(mouseVector);
 					selected.setVelocity(mouseVelocity);
+//					selected.setVelocity(new Vector2(0f, 0f));
 				}
 				
 			}
@@ -180,7 +181,7 @@ public class Main extends Application {
 		 
 		 for (int i = 0; i < 2; i++) {
 			 entities.add(new RectangleEntity(new Vector2(rand.nextFloat() * START_WIDTH,
-			 rand.nextFloat() * START_HEIGHT), rand.nextFloat() * 100f, rand.nextFloat() * 100f));
+			 rand.nextFloat() * START_HEIGHT), 50f, 50f));
 		 }
 
 //		entities.add(new CircleEntity(new Vector2(START_WIDTH / 2f, START_HEIGHT / 2f), 50f));
