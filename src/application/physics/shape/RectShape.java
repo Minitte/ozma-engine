@@ -7,6 +7,8 @@ public class RectShape extends Shape {
 
 	private float width;
 	private float height;
+	private Vector2 pointA;
+	private Vector2 pointB;
 
 	/**
 	 * @param position
@@ -18,12 +20,41 @@ public class RectShape extends Shape {
 		super(position, angle);
 		this.width = width;
 		this.height = height;
+		
+		updatePoints();
 	}
 
 	@Override
 	public void render(GraphicsContext gc, float delta) {
-		gc.strokeRect(position.getX() - (width * 0.5f), position.getY() - (height * 0.5f), width, height);
+		gc.strokeRect(pointA.getX(), pointA.getY(), width, height);
 
+	}
+	
+	@Override
+	public boolean pointWithin(Vector2 point) {
+		if (pointA.getX() > point.getX() || point.getX() > pointB.getX()) {
+			return false;
+		}
+		
+		if (pointA.getY() > point.getY() || point.getY() > pointB.getY()) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private void updatePoints() {
+		pointA = new Vector2(position.getX() - (width / 2f), position.getY() - (height / 2f));
+		pointB = new Vector2(position.getX() + (width / 2f), position.getY() + (height / 2f));
+	}
+	
+	/* (non-Javadoc)
+	 * @see application.entity.Entity#setPosition(application.math.Vector2)
+	 */
+	@Override
+	public void setPosition(Vector2 position) {
+		this.position = position;
+		updatePoints();
 	}
 
 	/**
@@ -39,6 +70,7 @@ public class RectShape extends Shape {
 	 */
 	public void setWidth(float width) {
 		this.width = width;
+		updatePoints();
 	}
 
 	/**
@@ -54,6 +86,22 @@ public class RectShape extends Shape {
 	 */
 	public void setHeight(float height) {
 		this.height = height;
+		updatePoints();
 	}
 
+	/**
+	 * @return the pointA
+	 */
+	public Vector2 getPointA() {
+		return pointA;
+	}
+
+	/**
+	 * @return the pointB
+	 */
+	public Vector2 getPointB() {
+		return pointB;
+	}
+
+	
 }

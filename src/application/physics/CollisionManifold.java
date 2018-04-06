@@ -3,18 +3,19 @@
  */
 package application.physics;
 
-import application.entity.CircleEntity;
-import application.entity.Entity;
-import application.entity.RectangleEntity;
+import application.entity.BasicPhysicsEntity;
 import application.math.Vector2;
+import application.physics.shape.CircleShape;
+import application.physics.shape.RectShape;
+import application.physics.shape.Shape;
 
 /**
  * @author Davis
  *
  */
 public class CollisionManifold {
-	private Entity entityA;
-	private Entity entityB;
+	private BasicPhysicsEntity entityA;
+	private BasicPhysicsEntity entityB;
 	private float penDepth;
 	private Vector2 normal;
 
@@ -22,70 +23,101 @@ public class CollisionManifold {
 	 * @param entityA
 	 * @param entityB
 	 */
-	public CollisionManifold(CircleEntity entityA, CircleEntity entityB) {
+	public CollisionManifold(BasicPhysicsEntity a, BasicPhysicsEntity b) {
 		super();
-		this.entityA = entityA;
-		this.entityB = entityB;
+		entityA = a;
+		entityB = b;
 
-		Vector2 v = entityB.getPosition().clone();
-		v.minus(entityA.getPosition());
-
-		float sum = entityA.getRadius() + entityB.getRadius();
-		penDepth = sum - v.getLength();
-
-		v.Normalize();
-		normal = v;
+		normal = calulateNormal();
+		
+		penDepth = calulateDepth(entityA.getShape(), entityB.getShape());
 	}
 	
 	/**
-	 * @param entityA
-	 * @param entityB
+	 * Calculates the normal
 	 */
-	public CollisionManifold(RectangleEntity entityA, RectangleEntity entityB) {
-		super();
-		this.entityA = entityA;
-		this.entityB = entityB;
-
+	private Vector2 calulateNormal() {
 		Vector2 v = entityB.getPosition().clone();
 		v.minus(entityA.getPosition());
 		v.Normalize();
-		normal = v;
+		return v;
+	}
+	
+	/**
+	 * Calculates the depth between two shapes
+	 * @param shapeA
+	 * @param shapeB
+	 * @return
+	 */
+	private float calulateDepth(Shape shapeA, Shape shapeB) {
+		// two circles
+		if (shapeA instanceof CircleShape && shapeB instanceof CircleShape) {
+			return calculateCircleDepth((CircleShape)shapeA, (CircleShape)shapeB);
+		} 
 		
+		// two rectangles
+		else if (shapeA instanceof RectShape && shapeB instanceof RectShape) {
+			return calculateRectDepth((RectShape)shapeA, (RectShape)shapeB);
+		}
+		
+		return 0;
+		
+	}
+	
+	/**
+	 * Calculates the penetration depth between two circles
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	private float calculateCircleDepth(CircleShape a, CircleShape b) {
+		Vector2 v = b.getPosition().clone();
+		v.minus(a.getPosition());
+		
+		float sum = a.getRadius() + b.getRadius();
+		return sum - v.getLength();
+	}
+	
+	/**
+	 * Calculates the penetration depth between two rectangles
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	private float calculateRectDepth(RectShape a, RectShape b) {
 		float xPen = 0;
 		float yPen = 0;
 		
-		// find depth based on smallest overlap on x or y
-		
-		if (entityA.getPointB().getX() > entityB.getPointA().getX()) {
-			xPen = entityA.getPointB().getX() - entityB.getPointA().getX();
+		if (a.getPointB().getX() > b.getPointA().getX()) {
+			xPen = a.getPointB().getX() - b.getPointA().getX();
 		} else {
-			xPen = entityA.getPointA().getX() - entityB.getPointB().getX();
+			xPen = a.getPointA().getX() - b.getPointB().getX();
 		}
 		
-		if (entityA.getPointB().getY() > entityB.getPointA().getY()) {
-			yPen = entityA.getPointB().getY() - entityB.getPointA().getX();
+		if (a.getPointB().getY() > b.getPointA().getY()) {
+			yPen = a.getPointB().getY() - b.getPointA().getX();
 		} else {
-			yPen = entityA.getPointA().getY() - entityB.getPointB().getY();
+			yPen = a.getPointA().getY() - b.getPointB().getY();
 		}
 		
 		// absolute value
 		xPen = xPen > 0f ? xPen : -xPen;
 		yPen = yPen > 0f ? yPen : -yPen;
 		
-		penDepth = xPen > yPen ? yPen : xPen;
+		return xPen > yPen ? yPen : xPen;
 	}
 
 	/**
 	 * @return the entityA
 	 */
-	public Entity getEntityA() {
+	public BasicPhysicsEntity getEntityA() {
 		return entityA;
 	}
 
 	/**
 	 * @return the entityB
 	 */
-	public Entity getEntityB() {
+	public BasicPhysicsEntity getEntityB() {
 		return entityB;
 	}
 

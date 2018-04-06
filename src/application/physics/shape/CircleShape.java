@@ -23,6 +23,17 @@ public class CircleShape extends Shape {
 	public void render(GraphicsContext gc, float delta) {
 		gc.strokeOval(position.getX() - radius, position.getY() - radius, boxRadius, boxRadius);
 	}
+	
+	@Override
+	public boolean pointWithin(Vector2 point) {
+		float r = radius;
+		r *= r;
+		float distX = (position.getX() - point.getX());
+		distX *= distX;
+		float distY = (position.getY() - point.getY());
+		distY *= distY;
+		return r > distX + distY;
+	}
 
 	/**
 	 * @return the radius

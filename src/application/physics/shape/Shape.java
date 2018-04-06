@@ -26,13 +26,20 @@ public abstract class Shape {
 	}
 
 	/**
-	 * Renders the outline of the shpae
+	 * Renders the outline of the shape
 	 * 
 	 * @param gc
 	 * @param delta
 	 */
 	public abstract void render(GraphicsContext gc, float delta);
 
+	/**
+	 * Checks if a point is within shape
+	 * @param point
+	 * @return
+	 */
+	public abstract boolean pointWithin(Vector2 point);
+	
 	/**
 	 * @return the position
 	 */

@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import application.entity.BasicPhysicsEntity;
 import application.entity.Entity;
-import application.entity.RectangleEntity;
 import application.math.Vector2;
 import application.physics.PhysicsEngine;
+import application.physics.PhysicsProperties;
+import application.physics.shape.CircleShape;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -35,6 +37,7 @@ public class Main extends Application {
 	private long lastFrame, lastUpdate;
 	
 	private List<Entity> entities;
+	private List<BasicPhysicsEntity> phyEntities;
 	private PhysicsEngine phyEngine;
 	
 	private Entity selected;
@@ -56,9 +59,11 @@ public class Main extends Application {
 		lastFrame = System.nanoTime();
 		lastUpdate = System.nanoTime();
 
+		entities = new ArrayList<>();
+		phyEntities = new ArrayList<>();
 		initEntities();
 
-		phyEngine = new PhysicsEngine(entities);
+		phyEngine = new PhysicsEngine(phyEntities);
 
 		// javafx node stuff
 		primaryStage.setResizable(false);
@@ -130,7 +135,7 @@ public class Main extends Application {
 
 				for (Entity ent : entities) {
 					
-					if (((RectangleEntity)ent).isWithin(mouseVector)) {
+					if (ent.pointWithin(mouseVector)) {
 						selected = ent;
 						return;
 					}
@@ -170,8 +175,6 @@ public class Main extends Application {
 	}
 
 	private void initEntities() {
-		entities = new ArrayList<>();
-
 		Random rand = new Random();
 
 //		 for (int i = 0; i < 1; i++) {
@@ -179,12 +182,29 @@ public class Main extends Application {
 //			 rand.nextFloat() * START_HEIGHT), rand.nextFloat() * 100f));
 //		 }
 		 
-		 for (int i = 0; i < 2; i++) {
-			 entities.add(new RectangleEntity(new Vector2(rand.nextFloat() * START_WIDTH,
-			 rand.nextFloat() * START_HEIGHT), 50f, 50f));
+		 for (int i = 0; i < 500; i++) {
+			 Vector2 pos = new Vector2(rand.nextFloat() * START_WIDTH, rand.nextFloat() * START_HEIGHT);
+			 
+//			 RectShape shape = new RectShape(pos, 0f, 50f, 50f);
+			 CircleShape shape = new CircleShape(pos, 0f, 50f);
+			 
+			 PhysicsProperties prop = new PhysicsProperties(5f, 0.5f);
+			 prop.setVelocityDamping(1.0f);
+			 
+			 addEntity(new BasicPhysicsEntity(pos, shape, prop));
 		 }
-
-//		entities.add(new CircleEntity(new Vector2(START_WIDTH / 2f, START_HEIGHT / 2f), 50f));
+	}
+	
+	/**
+	 * Adds an entity to the correct list
+	 * @param e
+	 */
+	public void addEntity(Entity e) {
+		entities.add(e);
+		
+		if (e instanceof BasicPhysicsEntity) {
+			phyEntities.add((BasicPhysicsEntity)e);
+		}
 	}
 
 	/**
@@ -197,9 +217,8 @@ public class Main extends Application {
 		for (Entity e : entities) {
 			e.update(delta);
 		}
-
-//		phyEngine.update();
-		phyEngine.updateParallel();
+		
+		phyEngine.update(true);
 	}
 
 	/**

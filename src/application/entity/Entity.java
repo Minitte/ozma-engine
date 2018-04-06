@@ -1,7 +1,6 @@
 package application.entity;
 
 import application.math.Vector2;
-import application.physics.PhysicsProperties;
 import javafx.scene.canvas.GraphicsContext;
 
 public abstract class Entity {
@@ -17,11 +16,6 @@ public abstract class Entity {
 	 * A xy vector representing the velocity that this object has
 	 */
 	protected Vector2 velocity;
-
-	/**
-	 * Physics properties for the entity
-	 */
-	protected PhysicsProperties phyProperties;
 	
 	/**
 	 * Constructor for an entity
@@ -45,6 +39,13 @@ public abstract class Entity {
 	 * @param delta
 	 */
 	public abstract void render(GraphicsContext gc, float delta);
+	
+	/**
+	 * Checks if a point is within entity
+	 * @param point
+	 * @return
+	 */
+	public abstract boolean pointWithin(Vector2 point);
 	
 	/**
 	 * @return the position
@@ -72,20 +73,6 @@ public abstract class Entity {
 	 */
 	public void setVelocity(Vector2 velocity) {
 		this.velocity = velocity;
-	}
-	
-	/**
-	 * @return the phyProperties
-	 */
-	public PhysicsProperties getPhyProperties() {
-		return phyProperties;
-	}
-
-	/**
-	 * @param phyProperties the phyProperties to set
-	 */
-	public void setPhyProperties(PhysicsProperties phyProperties) {
-		this.phyProperties = phyProperties;
 	}
 	
 }
