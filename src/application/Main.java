@@ -131,7 +131,7 @@ public class Main extends Application {
 				for (Entity ent : entities) {
 					
 					CircleEntity circle = (CircleEntity) ent;
-					if (circle.checkCollision(mouseVector)) {
+					if (circle.isWithin(mouseVector)) {
 						selected = circle;
 						return;
 					}
@@ -174,7 +174,7 @@ public class Main extends Application {
 
 		Random rand = new Random();
 
-		 for (int i = 0; i < 300; i++) {
+		 for (int i = 0; i < 3000; i++) {
 		 entities.add(new CircleEntity(new Vector2(rand.nextFloat() * START_WIDTH,
 		 rand.nextFloat() * START_HEIGHT), rand.nextFloat() * 100f));
 		 }

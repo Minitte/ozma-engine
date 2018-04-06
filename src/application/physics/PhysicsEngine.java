@@ -38,7 +38,7 @@ public class PhysicsEngine {
 			for (int j = i + 1; j < entities.size(); j++) {
 				CircleEntity b = (CircleEntity)entities.get(j);
 				
-				if (a.checkCollision(b)) {
+				if (checkCollision(a, b)) {
 					CollisionManifold m = new CollisionManifold(a, b);
 					resolveCollision(m);
 					positionCorrection(m);
@@ -59,7 +59,7 @@ public class PhysicsEngine {
 			for (int j = i + 1; j < entities.size(); j++) {
 				CircleEntity b = (CircleEntity)entities.get(j);
 				
-				if (a.checkCollision(b)) {
+				if (checkCollision(a, b)) {
 					CollisionManifold m = new CollisionManifold(a, b);
 					resolveCollision(m);
 					positionCorrection(m);
@@ -130,6 +130,21 @@ public class PhysicsEngine {
 		
 		cm.getEntityA().getPosition().minus(correctionVectorA);
 		cm.getEntityB().getPosition().add(correctionVectorB);
+	}
+	
+	/**
+	 * Checks if another circle entity has collided or clipped.
+	 * @param other
+	 * @return
+	 */
+	public boolean checkCollision(CircleEntity a, CircleEntity b) {
+		float r = a.getRadius() + b.getRadius();
+		r *= r;
+		float distX = (a.getPosition().getX() - b.getPosition().getX());
+		distX *= distX;
+		float distY = (a.getPosition().getY() - b.getPosition().getY());
+		distY *= distY;
+		return r > distX + distY;
 	}
 	
 	/**

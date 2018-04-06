@@ -27,26 +27,11 @@ public class CircleEntity extends Entity {
 	}
 	
 	/**
-	 * Checks if another circle entity has collided or clipped.
-	 * @param other
-	 * @return
-	 */
-	public boolean checkCollision(CircleEntity other) {
-		float r = radius + other.radius;
-		r *= r;
-		float distX = (position.getX() - other.position.getX());
-		distX *= distX;
-		float distY = (position.getY() - other.position.getY());
-		distY *= distY;
-		return r > distX + distY;
-	}
-	
-	/**
 	 * Check if theres a collision with the given pos
 	 * @param pos
 	 * @return
 	 */
-	public boolean checkCollision(Vector2 pos) {
+	public boolean isWithin(Vector2 pos) {
 		float r = radius;
 		r *= r;
 		float distX = (position.getX() - pos.getX());
