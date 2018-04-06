@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import application.entity.CircleEntity;
 import application.entity.Entity;
+import application.entity.RectangleEntity;
 import application.math.Vector2;
 import application.physics.PhysicsEngine;
 import javafx.animation.KeyFrame;
@@ -130,9 +130,8 @@ public class Main extends Application {
 
 				for (Entity ent : entities) {
 					
-					CircleEntity circle = (CircleEntity) ent;
-					if (circle.isWithin(mouseVector)) {
-						selected = circle;
+					if (((RectangleEntity)ent).isWithin(mouseVector)) {
+						selected = ent;
 						return;
 					}
 				}
@@ -174,9 +173,14 @@ public class Main extends Application {
 
 		Random rand = new Random();
 
-		 for (int i = 0; i < 3000; i++) {
-		 entities.add(new CircleEntity(new Vector2(rand.nextFloat() * START_WIDTH,
-		 rand.nextFloat() * START_HEIGHT), rand.nextFloat() * 100f));
+//		 for (int i = 0; i < 1; i++) {
+//			 entities.add(new CircleEntity(new Vector2(rand.nextFloat() * START_WIDTH,
+//			 rand.nextFloat() * START_HEIGHT), rand.nextFloat() * 100f));
+//		 }
+		 
+		 for (int i = 0; i < 2; i++) {
+			 entities.add(new RectangleEntity(new Vector2(rand.nextFloat() * START_WIDTH,
+			 rand.nextFloat() * START_HEIGHT), rand.nextFloat() * 100f, rand.nextFloat() * 100f));
 		 }
 
 //		entities.add(new CircleEntity(new Vector2(START_WIDTH / 2f, START_HEIGHT / 2f), 50f));

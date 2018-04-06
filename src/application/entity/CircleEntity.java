@@ -7,12 +7,8 @@ import javafx.scene.paint.Color;
 
 public class CircleEntity extends Entity {
 	
-	private static float density = 0.0001f;
-	
 	private float radius;
 	private float boxRadius;
-	
-	private PhysicsProperties phyProperties;
 	
 	public CircleEntity(Vector2 position, float radius) {
 		super(position);
@@ -72,23 +68,5 @@ public class CircleEntity extends Entity {
 	public void setRadius(float radius) {
 		this.radius = radius;
 	}
-
-	/**
-	 * @return the phyProperties
-	 */
-	public PhysicsProperties getPhyProperties() {
-		return phyProperties;
-	}
-
-	/**
-	 * @param phyProperties the phyProperties to set
-	 */
-	public void setPhyProperties(PhysicsProperties phyProperties) {
-		this.phyProperties = phyProperties;
-	}
-
-	
-	
-	
 
 }

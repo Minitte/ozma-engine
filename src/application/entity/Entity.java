@@ -1,9 +1,12 @@
 package application.entity;
 
 import application.math.Vector2;
+import application.physics.PhysicsProperties;
 import javafx.scene.canvas.GraphicsContext;
 
 public abstract class Entity {
+	
+	protected static float density = 0.0001f;
 	
 	/**
 	 * A xy vector representing the position of the center of the entity 
@@ -15,6 +18,11 @@ public abstract class Entity {
 	 */
 	protected Vector2 velocity;
 
+	/**
+	 * Physics properties for the entity
+	 */
+	protected PhysicsProperties phyProperties;
+	
 	/**
 	 * Constructor for an entity
 	 * @param position
@@ -66,6 +74,18 @@ public abstract class Entity {
 		this.velocity = velocity;
 	}
 	
-	
+	/**
+	 * @return the phyProperties
+	 */
+	public PhysicsProperties getPhyProperties() {
+		return phyProperties;
+	}
+
+	/**
+	 * @param phyProperties the phyProperties to set
+	 */
+	public void setPhyProperties(PhysicsProperties phyProperties) {
+		this.phyProperties = phyProperties;
+	}
 	
 }

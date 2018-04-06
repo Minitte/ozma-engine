@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
 
 import application.entity.CircleEntity;
 import application.entity.Entity;
+import application.entity.RectangleEntity;
 import application.math.Vector2;
 
 /**
@@ -34,9 +35,9 @@ public class PhysicsEngine {
 	 */
 	public void update() {
 		for (int i = 0; i < entities.size(); i++) {
-			CircleEntity a = (CircleEntity)entities.get(i);
+			RectangleEntity a = (RectangleEntity)entities.get(i);
 			for (int j = i + 1; j < entities.size(); j++) {
-				CircleEntity b = (CircleEntity)entities.get(j);
+				RectangleEntity b = (RectangleEntity)entities.get(j);
 				
 				if (checkCollision(a, b)) {
 					CollisionManifold m = new CollisionManifold(a, b);
@@ -55,9 +56,9 @@ public class PhysicsEngine {
 		IntStream intStream = IntStream.range(0, entities.size());
 		
 		intStream.parallel().forEach(i -> {
-			CircleEntity a = (CircleEntity)entities.get(i);
+			RectangleEntity a = (RectangleEntity)entities.get(i);
 			for (int j = i + 1; j < entities.size(); j++) {
-				CircleEntity b = (CircleEntity)entities.get(j);
+				RectangleEntity b = (RectangleEntity)entities.get(j);
 				
 				if (checkCollision(a, b)) {
 					CollisionManifold m = new CollisionManifold(a, b);
@@ -75,8 +76,8 @@ public class PhysicsEngine {
 	 */
 	public void resolveCollision(CollisionManifold cm) {
 		
-		CircleEntity a = cm.getEntityA();
-		CircleEntity b = cm.getEntityB();
+		Entity a = cm.getEntityA();
+		Entity b = cm.getEntityB();
 		
 		// relative velocity
 		Vector2 rv = b.getVelocity().clone();
@@ -134,7 +135,8 @@ public class PhysicsEngine {
 	
 	/**
 	 * Checks if another circle entity has collided or clipped.
-	 * @param other
+	 * @param a
+	 * @param b
 	 * @return
 	 */
 	public boolean checkCollision(CircleEntity a, CircleEntity b) {
@@ -145,6 +147,24 @@ public class PhysicsEngine {
 		float distY = (a.getPosition().getY() - b.getPosition().getY());
 		distY *= distY;
 		return r > distX + distY;
+	}
+	
+	/**
+	 * Checks if two rectangles had collided or clipped.
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public boolean checkCollision(RectangleEntity a, RectangleEntity b) {
+		if (a.getPointB().getX() < b.getPointA().getX() || a.getPointA().getX() < b.getPointB().getX()) {
+			return false;
+		}
+		
+		if (a.getPointB().getY() < b.getPointA().getY() || a.getPointA().getY() < b.getPointB().getY()) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 	/**
