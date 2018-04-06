@@ -51,49 +51,28 @@ public class CollisionManifold {
 		v.Normalize();
 		normal = v;
 		
-		Vector2 faceNormal = normal;
-
-		// Calculate half extents along x axis for each object
-		float extentAx = (entityA.getPointB().getX() - entityA.getPointA().getX()) / 2f;
-		float extentBx = (entityB.getPointB().getX() - entityB.getPointA().getX()) / 2f;
+		float xPen = 0;
+		float yPen = 0;
 		
-		// overlap on x
-		float overlapX = extentAx + extentBx - Math.abs(faceNormal.getX());
+		// find depth based on smallest overlap on x or y
 		
-		// test x axis
-		if (overlapX > 0) {
-			float extentAy = (entityA.getPointB().getY() - entityA.getPointA().getY()) / 2f;
-			float extentBy = (entityB.getPointB().getY() - entityB.getPointA().getY()) / 2f;
-			
-			float overlapY = extentAy + extentBy - Math.abs(faceNormal.getY());
-			
-			// test y axis
-			if (overlapY > 0) {
-				
-				// which is more
-				if (overlapX > overlapY) {
-					if (faceNormal.getX() < 0) {
-						//normal = new Vector2(-1f, 0f);
-					} else {
-						//normal = new Vector2(0f, 0f);
-					}
-					
-					penDepth = overlapX;
-					
-					return;
-				} else {
-					if (faceNormal.getY() < 0) {
-//						normal = new Vector2(0, -1);
-					} else {
-//						normal = new Vector2(0, 1);
-					}
-					
-					penDepth = overlapY;
-					
-					return;
-				}
-			}
+		if (entityA.getPointB().getX() > entityB.getPointA().getX()) {
+			xPen = entityA.getPointB().getX() - entityB.getPointA().getX();
+		} else {
+			xPen = entityA.getPointA().getX() - entityB.getPointB().getX();
 		}
+		
+		if (entityA.getPointB().getY() > entityB.getPointA().getY()) {
+			yPen = entityA.getPointB().getY() - entityB.getPointA().getX();
+		} else {
+			yPen = entityA.getPointA().getY() - entityB.getPointB().getY();
+		}
+		
+		// absolute value
+		xPen = xPen > 0f ? xPen : -xPen;
+		yPen = yPen > 0f ? yPen : -yPen;
+		
+		penDepth = xPen > yPen ? yPen : xPen;
 	}
 
 	/**
