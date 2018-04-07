@@ -18,7 +18,7 @@ import application.physics.shape.Shape;
  */
 public class PhysicsEngine {
 	
-	private static final float CORRECTION_PERCENT = 0.2f;
+	private static final float CORRECTION_PERCENT = 0.1f;
 	private static final float CORRECTION_SLOP = 0.01f;
 	
 	private List<BasicPhysicsEntity> entities;
