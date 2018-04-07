@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import application.entity.CircleEntity;
+import application.entity.BasicPhysicsEntity;
 import application.entity.Entity;
 import application.math.Vector2;
 import application.physics.PhysicsEngine;
+import application.physics.PhysicsProperties;
+import application.physics.shape.RectShape;
+import application.physics.shape.Shape;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -27,7 +30,7 @@ public class Main extends Application {
 	public static final int START_HEIGHT = 720;
 	public static final float NANO_SEC = 1000000000f;
 	public static final double TARGET_FPS = 60;
-	public static final double UPDATE_RATE = 30;
+	public static final double UPDATE_RATE = 60;
 	public static final double FRAME_DISPLAY_RATE = 10;
 	public static final String APP_NAME = "ozma engine";
 
@@ -35,6 +38,7 @@ public class Main extends Application {
 	private long lastFrame, lastUpdate;
 	
 	private List<Entity> entities;
+	private List<BasicPhysicsEntity> phyEntities;
 	private PhysicsEngine phyEngine;
 	
 	private Entity selected;
@@ -56,9 +60,11 @@ public class Main extends Application {
 		lastFrame = System.nanoTime();
 		lastUpdate = System.nanoTime();
 
+		entities = new ArrayList<>();
+		phyEntities = new ArrayList<>();
 		initEntities();
 
-		phyEngine = new PhysicsEngine(entities);
+		phyEngine = new PhysicsEngine(phyEntities);
 
 		// javafx node stuff
 		primaryStage.setResizable(false);
@@ -130,9 +136,8 @@ public class Main extends Application {
 
 				for (Entity ent : entities) {
 					
-					CircleEntity circle = (CircleEntity) ent;
-					if (circle.checkCollision(mouseVector)) {
-						selected = circle;
+					if (ent.pointWithin(mouseVector)) {
+						selected = ent;
 						return;
 					}
 				}
@@ -162,6 +167,7 @@ public class Main extends Application {
 					mouseVelocity.linearMutliply(10f);
 					selected.setPosition(mouseVector);
 					selected.setVelocity(mouseVelocity);
+//					selected.setVelocity(new Vector2(0f, 0f));
 				}
 				
 			}
@@ -170,16 +176,36 @@ public class Main extends Application {
 	}
 
 	private void initEntities() {
-		entities = new ArrayList<>();
-
 		Random rand = new Random();
 
-		 for (int i = 0; i < 300; i++) {
-		 entities.add(new CircleEntity(new Vector2(rand.nextFloat() * START_WIDTH,
-		 rand.nextFloat() * START_HEIGHT), rand.nextFloat() * 100f));
+//		 for (int i = 0; i < 1; i++) {
+//			 entities.add(new CircleEntity(new Vector2(rand.nextFloat() * START_WIDTH,
+//			 rand.nextFloat() * START_HEIGHT), rand.nextFloat() * 100f));
+//		 }
+		 
+		 for (int i = 0; i < 1000; i++) {
+			 Vector2 pos = new Vector2(rand.nextFloat() * START_WIDTH, rand.nextFloat() * START_HEIGHT);
+			 
+//			 RectShape shape = new RectShape(pos, 0f, 50f, 50f);
+			 Shape shape = new RectShape(pos, 0f, 50f, 50f);
+			 
+			 PhysicsProperties prop = new PhysicsProperties(5f, 0.5f);
+			 prop.setVelocityDamping(1.0f);
+			 
+			 addEntity(new BasicPhysicsEntity(pos, shape, prop));
 		 }
-
-//		entities.add(new CircleEntity(new Vector2(START_WIDTH / 2f, START_HEIGHT / 2f), 50f));
+	}
+	
+	/**
+	 * Adds an entity to the correct list
+	 * @param e
+	 */
+	public void addEntity(Entity e) {
+		entities.add(e);
+		
+		if (e instanceof BasicPhysicsEntity) {
+			phyEntities.add((BasicPhysicsEntity)e);
+		}
 	}
 
 	/**
@@ -192,9 +218,8 @@ public class Main extends Application {
 		for (Entity e : entities) {
 			e.update(delta);
 		}
-
-//		phyEngine.update();
-		phyEngine.updateParallel();
+		
+		phyEngine.update(true);
 	}
 
 	/**

@@ -5,6 +5,8 @@ import javafx.scene.canvas.GraphicsContext;
 
 public abstract class Entity {
 	
+	protected static float density = 0.0001f;
+	
 	/**
 	 * A xy vector representing the position of the center of the entity 
 	 */
@@ -14,7 +16,7 @@ public abstract class Entity {
 	 * A xy vector representing the velocity that this object has
 	 */
 	protected Vector2 velocity;
-
+	
 	/**
 	 * Constructor for an entity
 	 * @param position
@@ -37,6 +39,13 @@ public abstract class Entity {
 	 * @param delta
 	 */
 	public abstract void render(GraphicsContext gc, float delta);
+	
+	/**
+	 * Checks if a point is within entity
+	 * @param point
+	 * @return
+	 */
+	public abstract boolean pointWithin(Vector2 point);
 	
 	/**
 	 * @return the position
@@ -65,7 +74,5 @@ public abstract class Entity {
 	public void setVelocity(Vector2 velocity) {
 		this.velocity = velocity;
 	}
-	
-	
 	
 }
