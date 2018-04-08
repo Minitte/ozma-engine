@@ -43,6 +43,41 @@ public class RectShape extends Shape {
 		return true;
 	}
 	
+	@Override
+	public Vector2 GetSupport(Vector2 dir) {
+		Vector2 best = pointA.clone();
+		float bestScalar = best.dot(dir);
+		
+		Vector2 test;
+		float testScalar;
+		
+		// try top right
+		test = new Vector2(pointB.getX(), pointA.getY());
+		testScalar = test.dot(dir);
+		
+		if (testScalar > bestScalar) {
+			best = test;
+		}
+		
+		// try bottom left
+		test = new Vector2(pointA.getX(), pointB.getY());
+		testScalar = test.dot(dir);
+		
+		if (testScalar > bestScalar) {
+			best = test;
+		}
+				
+		// try bottom right (pointB)
+		test = pointA.clone();
+		testScalar = test.dot(dir);
+		
+		if (testScalar > bestScalar) {
+			best = test;
+		}
+		
+		return best;
+	}
+	
 	private void updatePoints() {
 		pointA = new Vector2(position.getX() - (width / 2f), position.getY() - (height / 2f));
 		pointB = new Vector2(position.getX() + (width / 2f), position.getY() + (height / 2f));

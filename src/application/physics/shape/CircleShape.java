@@ -34,6 +34,13 @@ public class CircleShape extends Shape {
 		distY *= distY;
 		return r > distX + distY;
 	}
+	
+	@Override
+	public Vector2 GetSupport(Vector2 dir) {
+		Vector2 v = dir.clone();
+		v.linearMutliply(radius);
+		return v;
+	}
 
 	/**
 	 * @return the radius

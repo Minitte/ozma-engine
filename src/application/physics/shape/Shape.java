@@ -41,6 +41,13 @@ public abstract class Shape {
 	public abstract boolean pointWithin(Vector2 point);
 	
 	/**
+	 * Gets the vertex that is farthest away in the given direction
+	 * @param dir a unit vector 
+	 * @return
+	 */
+	public abstract Vector2 GetSupport(Vector2 dir);
+	
+	/**
 	 * @return the position
 	 */
 	public Vector2 getPosition() {
