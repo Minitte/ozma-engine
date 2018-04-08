@@ -45,7 +45,7 @@ public class PhysicsEngine {
 					BasicPhysicsEntity b = entities.get(j);
 					
 					
-					if (checkCollision(a.getShape(), b.getShape())) {
+					if (checkCollision(a, b)) {
 						CollisionManifold m = new CollisionManifold(a, b);
 						resolveCollision(m);
 						positionCorrection(m);
@@ -60,7 +60,7 @@ public class PhysicsEngine {
 					BasicPhysicsEntity b = entities.get(j);
 					
 					
-					if (checkCollision(a.getShape(), b.getShape())) {
+					if (checkCollision(a, b)) {
 						CollisionManifold m = new CollisionManifold(a, b);
 						resolveCollision(m);
 						positionCorrection(m);
@@ -135,11 +135,14 @@ public class PhysicsEngine {
 	
 	/**
 	 * Check if two shapes are overlapping / clipping / colliding 
-	 * @param a
-	 * @param b
+	 * @param entA
+	 * @param entB
 	 * @return
 	 */
-	public boolean checkCollision(Shape shapeA, Shape shapeB) {
+	public boolean checkCollision(BasicPhysicsEntity entA, BasicPhysicsEntity entB) {
+		Shape shapeA = entA.getShape();
+		Shape shapeB = entB.getShape();
+		
 		// two circles
 		if (shapeA instanceof CircleShape && shapeB instanceof CircleShape) {
 			return checkCollision((CircleShape)shapeA, (CircleShape)shapeB);
@@ -150,7 +153,13 @@ public class PhysicsEngine {
 			return checkCollision((RectShape)shapeA, (RectShape)shapeB);
 		}
 		
-		return false;
+		// anything else... try the cm
+		else {
+			CollisionManifold cm = new CollisionManifold(entA, entB);
+			return cm.getPenDepth() > 0f;
+		}
+		
+//		return false;
 	} 
 	
 	/**

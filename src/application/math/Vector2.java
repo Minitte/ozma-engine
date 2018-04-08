@@ -140,6 +140,14 @@ public class Vector2 {
 	}
 	
 	/**
+	 * the length of the vector by calculating the hypotenuse without doing the sqrt step
+	 * @return
+	 */
+	public float getLengthSquared() {
+		return (x * x) + (y * y);
+	}
+	
+	/**
 	 * @return the x
 	 */
 	public float getX() {
