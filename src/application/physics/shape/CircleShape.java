@@ -19,6 +19,9 @@ public class CircleShape extends Shape {
 		super(position, angle);
 		this.radius = radius;
 		boxRadius = radius * 2;
+		
+		initVertices();
+		initFaceNormals();
 	}
 	
 	@Override
