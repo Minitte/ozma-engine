@@ -146,8 +146,8 @@ public class CollisionManifold {
 		Vector2 p = new Vector2(px, py);
 		Vector2 n = b.getPosition().clone();
 		n.minus(p);
-		if (!a.pointWithin(b.getPosition())) {
-			n.linearMutliply(-1f);
+		if (a.pointWithin(b.getPosition())) {
+			n.linearMutliply(-1.1f);
 		}
 		
 		if (b.getRadius() * b.getRadius() < n.getLengthSquared()) {
