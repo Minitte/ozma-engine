@@ -89,6 +89,20 @@ public class Vector2 {
 	}
 	
 	/**
+	 * Multiplies with the 2x2 matrix (mat22)
+	 * @param other
+	 */
+	public void multiply(Mat22 other) {
+		float oldX = x;
+		float oldY = y;
+		
+		float[][] val = other.getValues();
+		
+		x = (oldX * val[0][0]) + (oldY * val[0][1]);
+		y = (oldX * val[1][0]) + (oldY * val[1][1]);
+	}
+	
+	/**
 	 * divdes both x and y by the given denominator
 	 * @param denominator
 	 */
@@ -104,6 +118,25 @@ public class Vector2 {
 	public void divide(Vector2 other) {
 		x /= other.x;
 		y /= other.y;
+	}
+	
+	/**
+	 * Performs a cross products between two vector2s
+	 * @param other
+	 * @return
+	 */
+	public float CrossProduct(Vector2 other) {
+		return (x * other.y) - (y * other.x);
+	}
+	
+	/**
+	 * Performs a crossproduct with s
+	 * x * -s and y * +s
+	 * @param s
+	 */
+	public void CrossProduct(float s) {
+		y *= s;
+		x *= -s;
 	}
 	
 	/**
@@ -178,6 +211,14 @@ public class Vector2 {
 	@Override
 	public String toString() {
 		return String.format("Vector2[%f, %f]", x, y);
+	}
+	
+	public static Vector2 CrossProduct(Vector2 a, float s) {
+		return new Vector2(s * a.getY(), -s * a.getX());
+	}
+	
+	public static Vector2 CrossProduct(float s, Vector2 a) {
+		return new Vector2(-s * a.getY(), s * a.getX());
 	}
 
 }
