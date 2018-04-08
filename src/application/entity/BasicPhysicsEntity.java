@@ -8,6 +8,10 @@ import javafx.scene.canvas.GraphicsContext;
 public class BasicPhysicsEntity extends Entity {
 	private Shape shape;
 	private PhysicsProperties properties;
+	
+	private float angularVelocity;
+	private float acceration;
+	private float torque;
 
 	/**
 	 * @param position
@@ -22,10 +26,16 @@ public class BasicPhysicsEntity extends Entity {
 
 	@Override
 	public void update(float delta) {
+		Vector2 gravity = new Vector2(0, 0);
+		
 		Vector2 scaledVelocity = velocity.clone();
+		scaledVelocity.add(gravity);
 		scaledVelocity.linearMutliply(delta);
+		
 		position.add(scaledVelocity);
 		shape.setPosition(position);
+		
+		shape.setAngle(shape.getAngle() + angularVelocity);
 
 		// apply damping effects
 		Vector2 dampingVector = new Vector2(properties.getVelocityDamping(), properties.getVelocityDamping());
