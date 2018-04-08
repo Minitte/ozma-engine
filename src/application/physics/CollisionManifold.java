@@ -60,6 +60,15 @@ public class CollisionManifold {
 			return calculateRectDepth((RectShape)shapeA, (RectShape)shapeB);
 		}
 		
+		// one circle and one rect
+		else if (shapeA instanceof CircleShape && shapeB instanceof RectShape) {
+			return calculateMixDepth((RectShape)shapeB, (CircleShape)shapeA);
+		}
+		
+		else if (shapeB instanceof CircleShape && shapeA instanceof RectShape) {
+			return calculateMixDepth((RectShape)shapeA, (CircleShape)shapeB);
+		}
+		
 		return 0;
 		
 	}
@@ -105,6 +114,49 @@ public class CollisionManifold {
 		yPen = yPen > 0f ? yPen : -yPen;
 		
 		return xPen > yPen ? yPen : xPen;
+	}
+	
+	/**
+	 * Calculates the penetration depth between a rect and circle
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	private float calculateMixDepth(RectShape a, CircleShape b) {
+		
+		float pxA = a.getPointA().getX() - b.getPosition().getX();
+		pxA = pxA > 0f ? pxA : -pxA;
+		
+		float pxB = a.getPointB().getX() - b.getPosition().getX();
+		pxB = pxB > 0f ? pxB : -pxB;
+		
+		float pyA = a.getPointA().getY() - b.getPosition().getY();
+		pyA = pyA > 0f ? pyA : -pyA;
+		
+		float pyB = a.getPointB().getY() - b.getPosition().getY();
+		pyB = pyB > 0f ? pyB : -pyB;
+		
+		float px = pxA < pxB ? a.getPointA().getX() : a.getPointB().getX();
+		float py = pyA < pyB ? a.getPointA().getY() : a.getPointB().getY();
+		
+		Vector2 p = new Vector2(px, py);
+		Vector2 n = b.getPosition().clone();
+		n.minus(p);
+		if (!a.pointWithin(b.getPosition())) {
+			n.linearMutliply(-1f);
+		}
+		
+		if (b.getRadius() * b.getRadius() < n.getLengthSquared()) {
+			return 0f;
+		}
+		
+		float depth = n.getLength();
+		
+		n.Normalize();
+		
+		normal = n;
+		
+		return depth;
 	}
 
 	/**
