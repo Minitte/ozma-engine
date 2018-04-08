@@ -17,6 +17,10 @@ public class CollisionManifold {
 	private BasicPhysicsEntity entityA;
 	private BasicPhysicsEntity entityB;
 	private float penDepth;
+	
+	/**
+	 * Direction from a to b
+	 */
 	private Vector2 normal;
 
 	/**
@@ -157,6 +161,34 @@ public class CollisionManifold {
 		normal = n;
 		
 		return depth;
+	}
+	
+	private float maxVertexDepth(Shape a, Shape b) {
+		float bestDistance = Float.MIN_VALUE;
+		
+		Vector2[] vertAs = a.getVertices();
+		Vector2[] faceNAs = a.getFaceNormals();
+		
+		for (int i = 0; i < vertAs.length; i++) {
+			Vector2 n = faceNAs[i];
+			Vector2 invN = n.clone();
+			invN.linearMutliply(-1f);
+			
+			Vector2 s = b.GetSupport(invN);
+			
+			Vector2 v = vertAs[i];
+			
+			Vector2 sv = s.clone();
+			sv.minus(v);
+			
+			float d = n.dot(sv);
+			
+			if (d > bestDistance) {
+				bestDistance = d;
+			}
+		}
+		
+		return bestDistance;
 	}
 
 	/**

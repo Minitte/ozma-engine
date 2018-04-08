@@ -14,6 +14,16 @@ public abstract class Shape {
 	 * The angle or rotation of the shape in radians
 	 */
 	protected float angle;
+	
+	/**
+	 * List of all the vertices of the shape
+	 */
+	protected Vector2[] vertices;
+	
+	/**
+	 * List of all of the normals for each face
+	 */
+	protected Vector2[] faceNormals;
 
 	/**
 	 * @param position
@@ -23,6 +33,25 @@ public abstract class Shape {
 		super();
 		this.position = position;
 		this.angle = angle;
+	}
+	
+	/**
+	 * initalizes all of the vertices of the shape
+	 */
+	protected abstract void initVertices();
+	
+	/**
+	 * initalizes all of the faces of the shape;
+	 */
+	protected void initFaceNormals() {
+		faceNormals = new Vector2[vertices.length];
+		
+		for (int i = 0 ; i < faceNormals.length; i++) {
+			Vector2 v = vertices[(i + 1) % vertices.length].clone();
+			v.minus(vertices[i]);
+			faceNormals[i] = v.getNormal();
+			faceNormals[i].Normalize();
+		}
 	}
 
 	/**
@@ -47,6 +76,17 @@ public abstract class Shape {
 	 */
 	public abstract Vector2 GetSupport(Vector2 dir);
 	
+	public double[][] verticesToDoubleArr() {
+		double[][] vert = new double[2][vertices.length];
+		
+		for (int i = 0; i < vertices.length; i++) {
+			vert[0][i] = vertices[i].getX();
+			vert[1][i] = vertices[i].getY();
+		}
+		
+		return vert;
+	}
+	
 	/**
 	 * @return the position
 	 */
@@ -55,11 +95,16 @@ public abstract class Shape {
 	}
 
 	/**
-	 * @param position
-	 *            the position to set
+	 * Moves the shape and it's vertices to another location
+	 * @param pos
 	 */
-	public void setPosition(Vector2 position) {
-		this.position = position;
+	public void moveTo(Vector2 pos) {
+		Vector2 diff = pos.clone();
+		diff.minus(position);
+		
+		position = pos;
+		
+		initVertices();
 	}
 
 	/**
@@ -76,5 +121,37 @@ public abstract class Shape {
 	public void setAngle(float angle) {
 		this.angle = angle;
 	}
+
+	/**
+	 * @return the vertices
+	 */
+	public Vector2[] getVertices() {
+		return vertices;
+	}
+
+	/**
+	 * @param vertices the vertices to set
+	 */
+	public void setVertices(Vector2[] vertices) {
+		this.vertices = vertices;
+	}
+
+	/**
+	 * @return the faceNormals
+	 */
+	public Vector2[] getFaceNormals() {
+		return faceNormals;
+	}
+
+	/**
+	 * @param faceNormals the faceNormals to set
+	 */
+	public void setFaceNormals(Vector2[] faceNormals) {
+		this.faceNormals = faceNormals;
+	}
+	
+	
+	
+	
 
 }

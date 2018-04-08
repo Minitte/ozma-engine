@@ -5,6 +5,8 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class RectShape extends Shape {
 
+	private static final int NUM_SIDES = 4;
+	
 	private float width;
 	private float height;
 	private Vector2 pointA;
@@ -22,11 +24,29 @@ public class RectShape extends Shape {
 		this.height = height;
 		
 		updatePoints();
+		
+		initVertices();
+		initFaceNormals();
+	}
+	
+	/* (non-Javadoc)
+	 * @see application.physics.shape.Shape#initVertices()
+	 */
+	@Override
+	protected void initVertices() {
+		vertices = new Vector2[NUM_SIDES];
+		
+		vertices[0] = pointA; // top left
+		vertices[1] = new Vector2(pointB.getX(), pointA.getY()); // top right
+		vertices[2] = pointB; // bottom right
+		vertices[3] = new Vector2(pointA.getX(), pointB.getY()); // bottom left
 	}
 
 	@Override
 	public void render(GraphicsContext gc, float delta) {
-		gc.strokeRect(pointA.getX(), pointA.getY(), width, height);
+//		gc.strokeRect(pointA.getX(), pointA.getY(), width, height);
+		double[][] vert = verticesToDoubleArr();
+		gc.strokePolygon(vert[0], vert[1], NUM_SIDES);
 
 	}
 	
@@ -45,34 +65,17 @@ public class RectShape extends Shape {
 	
 	@Override
 	public Vector2 GetSupport(Vector2 dir) {
-		Vector2 best = pointA.clone();
-		float bestScalar = best.dot(dir);
+		Vector2 best = null;
+		float bestDistance = Float.MIN_VALUE;
 		
-		Vector2 test;
-		float testScalar;
-		
-		// try top right
-		test = new Vector2(pointB.getX(), pointA.getY());
-		testScalar = test.dot(dir);
-		
-		if (testScalar > bestScalar) {
-			best = test;
-		}
-		
-		// try bottom left
-		test = new Vector2(pointA.getX(), pointB.getY());
-		testScalar = test.dot(dir);
-		
-		if (testScalar > bestScalar) {
-			best = test;
-		}
-				
-		// try bottom right (pointB)
-		test = pointA.clone();
-		testScalar = test.dot(dir);
-		
-		if (testScalar > bestScalar) {
-			best = test;
+		for (int i = 0; i < vertices.length; i++) {
+			float d = vertices[i].dot(dir);
+			d = d > 0 ? d : -d;
+			
+			if (d > bestDistance) {
+				d = bestDistance;
+				best = vertices[i];
+			}
 		}
 		
 		return best;
@@ -84,12 +87,12 @@ public class RectShape extends Shape {
 	}
 	
 	/* (non-Javadoc)
-	 * @see application.entity.Entity#setPosition(application.math.Vector2)
+	 * @see application.physics.shape.Shape#moveTo(application.math.Vector2)
 	 */
 	@Override
-	public void setPosition(Vector2 position) {
-		this.position = position;
+	public void moveTo(Vector2 pos) {
 		updatePoints();
+		super.moveTo(pos);
 	}
 
 	/**
@@ -105,7 +108,6 @@ public class RectShape extends Shape {
 	 */
 	public void setWidth(float width) {
 		this.width = width;
-		updatePoints();
 	}
 
 	/**
@@ -121,7 +123,6 @@ public class RectShape extends Shape {
 	 */
 	public void setHeight(float height) {
 		this.height = height;
-		updatePoints();
 	}
 
 	/**

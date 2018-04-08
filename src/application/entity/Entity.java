@@ -5,8 +5,6 @@ import javafx.scene.canvas.GraphicsContext;
 
 public abstract class Entity {
 	
-	protected static float density = 0.0001f;
-	
 	/**
 	 * A xy vector representing the position of the center of the entity 
 	 */

@@ -5,6 +5,8 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class CircleShape extends Shape {
 
+	private static final int DEGREE = 16;
+	
 	private float radius;
 	private float boxRadius;
 
@@ -17,6 +19,19 @@ public class CircleShape extends Shape {
 		super(position, angle);
 		this.radius = radius;
 		boxRadius = radius * 2;
+	}
+	
+	@Override
+	protected void initVertices() {
+		vertices = new Vector2[DEGREE];
+		
+		double radInc = (Math.PI * 2.0) / DEGREE;
+		double rad = 0;
+		
+		for (int i = 0 ; i < vertices.length; i++) {
+			vertices[i] = new Vector2((float)Math.cos(rad), (float)Math.sin(rad));
+			rad += radInc;
+		}
 	}
 
 	@Override

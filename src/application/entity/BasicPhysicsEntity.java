@@ -33,7 +33,7 @@ public class BasicPhysicsEntity extends Entity {
 		scaledVelocity.linearMutliply(delta);
 		
 		position.add(scaledVelocity);
-		shape.setPosition(position);
+		shape.moveTo(position);
 		
 		shape.setAngle(shape.getAngle() + angularVelocity);
 
@@ -52,6 +52,15 @@ public class BasicPhysicsEntity extends Entity {
 	@Override
 	public boolean pointWithin(Vector2 point) {
 		return shape.pointWithin(point);
+	}
+	
+	/* (non-Javadoc)
+	 * @see application.entity.Entity#setPosition(application.math.Vector2)
+	 */
+	@Override
+	public void setPosition(Vector2 position) {
+		shape.moveTo(position);
+		this.position = position;
 	}
 
 	/**
