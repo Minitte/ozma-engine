@@ -97,6 +97,24 @@ public abstract class Shape {
 
 		}
 	}
+	
+	/**
+	 * Finds the face normal closest to the direction
+	 * @param dir
+	 * @return
+	 */
+	public Vector2 getFaceNormal(Vector2 dir) {
+		Vector2 best = null;
+		float max = Float.MIN_VALUE;
+		
+		for (int i = 0; i < faceNormals.length; i++) { 
+			if (dir.dot(faceNormals[i]) > max) {
+				best = faceNormals[i];
+			}
+		}
+		
+		return best;
+	}
 
 	/**
 	 * @return the position

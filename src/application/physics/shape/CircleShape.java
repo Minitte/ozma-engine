@@ -85,7 +85,15 @@ public class CircleShape extends Shape {
 	 */
 	@Override
 	public Vector2 getVertice(Vector2 direction) {
-		return direction.clone().Normalize().linearMutliply(radius);
+		return direction.clone().Normalize().linearMutliply(radius).add(position);
+	}
+	
+	/* (non-Javadoc)
+	 * @see application.physics.shape.Shape#getFaceNormal(application.math.Vector2)
+	 */
+	@Override
+	public Vector2 getFaceNormal(Vector2 dir) {
+		return dir.clone();
 	}
 	
 	/**
