@@ -7,6 +7,8 @@ public class RectShape extends Shape {
 
 	private float width;
 	private float height;
+	private float looseCheckRadius;
+	
 	/**
 	 * @param position
 	 * @param angle
@@ -17,6 +19,7 @@ public class RectShape extends Shape {
 		super(position, angle);
 		this.width = width;
 		this.height = height;
+		looseCheckRadius = (float)Math.sqrt((width * width) + (height * height)) / 2f;
 		
 		calculateVertices();
 	}
@@ -82,6 +85,14 @@ public class RectShape extends Shape {
 		}
 		
 		return best;
+	}
+	
+	/* (non-Javadoc)
+	 * @see application.physics.shape.Shape#getLooseCheckRadius()
+	 */
+	@Override
+	public float getLooseCheckRadius() {
+		return looseCheckRadius;
 	}
 
 	/**

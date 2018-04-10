@@ -40,6 +40,14 @@ public class CircleShape extends Shape {
 
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see application.physics.shape.Shape#getLooseCheckRadius()
+	 */
+	@Override
+	public float getLooseCheckRadius() {
+		return radius;
+	}
 
 	@Override
 	public void render(GraphicsContext gc, float delta) {

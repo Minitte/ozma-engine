@@ -58,6 +58,12 @@ public abstract class Shape {
 	public abstract Vector2 getVertice(Vector2 direction);
 	
 	/**
+	 * the radius used for a quick check for potential collisions
+	 * @return
+	 */
+	public abstract float getLooseCheckRadius();
+	
+	/**
 	 * @return the position
 	 */
 	public Vector2 getPosition() {
