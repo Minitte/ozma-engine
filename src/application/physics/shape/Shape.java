@@ -71,6 +71,13 @@ public abstract class Shape {
 	 *            a vector representing direction
 	 */
 	public abstract Vector2 getVertice(Vector2 direction);
+	
+	/**
+	 * Gets the vertex that is towards the shape's position
+	 * 
+	 * @param position towards this shape's position
+	 */
+	public abstract Vector2 getVertice(Shape pos);
 
 	/**
 	 * the radius used for a quick check for potential collisions

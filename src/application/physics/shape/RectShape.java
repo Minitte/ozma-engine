@@ -24,6 +24,7 @@ public class RectShape extends Shape {
 		looseCheckRadius = (float)Math.sqrt((width * width) + (height * height)) / 2f;
 		
 		calculateVertices();
+		calulateNormals();
 	}
 
 	@Override
@@ -87,6 +88,14 @@ public class RectShape extends Shape {
 		}
 		
 		return best;
+	}
+	
+	/* (non-Javadoc)
+	 * @see application.physics.shape.Shape#getVertice(application.physics.shape.Shape)
+	 */
+	@Override
+	public Vector2 getVertice(Shape pos) {
+		return getVertice(pos.getPosition().clone().minus(position).Normalize());
 	}
 	
 	/* (non-Javadoc)

@@ -89,11 +89,19 @@ public class CircleShape extends Shape {
 	}
 	
 	/* (non-Javadoc)
+	 * @see application.physics.shape.Shape#getVertice(application.physics.shape.Shape)
+	 */
+	@Override
+	public Vector2 getVertice(Shape pos) {
+		return getVertice(pos.getPosition().clone().minus(position).Normalize());
+	}
+	
+	/* (non-Javadoc)
 	 * @see application.physics.shape.Shape#getFaceNormal(application.math.Vector2)
 	 */
 	@Override
 	public Vector2 getFaceNormal(Vector2 dir) {
-		return dir.clone();
+		return dir.clone().Normalize();
 	}
 	
 	/**
