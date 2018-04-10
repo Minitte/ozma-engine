@@ -151,7 +151,28 @@ public class PhysicsEngine {
 		return false;
 	}
 	
+	/**
+	 * collision check between circles
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public boolean circleVsCircle(CircleShape a, CircleShape b) {
+		float r = a.getRadius() + b.getRadius();
 
+		r *= r;
+
+		float distX = (a.getPosition().getX() - b.getPosition().getX());
+
+		distX *= distX;
+
+		float distY = (a.getPosition().getY() - b.getPosition().getY());
+
+		distY *= distY;
+
+		return r > distX + distY;
+	}
+	
 	
 	
 	
