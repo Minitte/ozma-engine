@@ -8,8 +8,6 @@ import java.util.List;
 
 import application.entity.BasicPhysicsEntity;
 import application.math.Vector2;
-import application.physics.shape.CircleShape;
-import application.physics.shape.RectShape;
 import application.physics.shape.Shape;
 
 /**
@@ -39,6 +37,7 @@ public class PhysicsEngine {
 	public void update(boolean parallel) {
 		
 		findPotentialCollisions();
+		findActualCollisions();
 	}
 	
 	/**
@@ -67,6 +66,12 @@ public class PhysicsEngine {
 	private void findActualCollisions() {
 		for (int i = 0; i < potentialCollisions.size(); i++) {
 			Potential pot = potentialCollisions.get(i);
+			
+			if (checkCollision(pot.a.getShape(), pot.b.getShape())) {
+				CollisionManifold cm = new CollisionManifold(pot.a, pot.b);
+				resolveCollision(cm);
+				positionCorrection(cm);
+			}
 		}
 		
 		potentialCollisions.clear();
@@ -142,45 +147,24 @@ public class PhysicsEngine {
 	 * @return
 	 */
 	public boolean checkCollision(Shape a, Shape b) {
-		int typeA = a.getShapeType();
-		int typeB = b.getShapeType();
 		
-		if (typeA == CircleShape.TYPE_ID && typeA == CircleShape.TYPE_ID) {
-			return circleVsCircle((CircleShape)a, (CircleShape)b);
+		// projection order
+		
+		if (a.getPosition().getLengthSquared() < b.getPosition().getLengthSquared()) {
+			return projectionCheck(a, b);
+		} else {
+			return projectionCheck(b, a);
 		}
 		
-		return false;
 	}
 	
 	/**
-	 * collision check between circles
+	 * projection based collision checking
 	 * @param a
 	 * @param b
 	 * @return
 	 */
-	public boolean circleVsCircle(CircleShape a, CircleShape b) {
-		float r = a.getRadius() + b.getRadius();
-
-		r *= r;
-
-		float distX = (a.getPosition().getX() - b.getPosition().getX());
-
-		distX *= distX;
-
-		float distY = (a.getPosition().getY() - b.getPosition().getY());
-
-		distY *= distY;
-
-		return r > distX + distY;
-	}
-	
-	/**
-	 * collision check between circle and rect
-	 * @param a
-	 * @param b
-	 * @return
-	 */
-	public boolean circleVsRect(CircleShape a, RectShape b) {
+	public boolean projectionCheck(Shape a, Shape b) {
 		Vector2 collisionVector = b.getPosition().clone().minus(a.getPosition()).Normalize();
 		Vector2 rectContact = b.getVertice(collisionVector);
 		Vector2 circContact = a.getVertice(collisionVector.clone().linearMutliply(-1f));
@@ -190,8 +174,6 @@ public class PhysicsEngine {
 		
 		return circDist - rectDist <= 0;
 	}
-	
-	
 	
 	/**
 	 * Returns the smaller value of the given
