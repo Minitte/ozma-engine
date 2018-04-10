@@ -9,6 +9,7 @@ import java.util.List;
 import application.entity.BasicPhysicsEntity;
 import application.math.Vector2;
 import application.physics.shape.CircleShape;
+import application.physics.shape.RectShape;
 import application.physics.shape.Shape;
 
 /**
@@ -173,6 +174,22 @@ public class PhysicsEngine {
 		return r > distX + distY;
 	}
 	
+	/**
+	 * collision check between circle and rect
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public boolean circleVsRect(CircleShape a, RectShape b) {
+		Vector2 collisionVector = b.getPosition().clone().minus(a.getPosition()).Normalize();
+		Vector2 rectContact = b.getVertice(collisionVector);
+		Vector2 circContact = a.getVertice(collisionVector.clone().linearMutliply(-1f));
+		
+		float rectDist = collisionVector.dot(rectContact);
+		float circDist = collisionVector.dot(circContact);
+		
+		return circDist - rectDist <= 0;
+	}
 	
 	
 	
