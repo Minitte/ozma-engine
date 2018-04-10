@@ -5,6 +5,8 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class RectShape extends Shape {
 
+	public static final int TYPE_ID = 2;
+	
 	private float width;
 	private float height;
 	private float looseCheckRadius;
@@ -16,7 +18,7 @@ public class RectShape extends Shape {
 	 * @param height
 	 */
 	public RectShape(Vector2 position, float angle, float width, float height) {
-		super(position, angle);
+		super(position, angle, TYPE_ID);
 		this.width = width;
 		this.height = height;
 		looseCheckRadius = (float)Math.sqrt((width * width) + (height * height)) / 2f;

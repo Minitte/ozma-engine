@@ -4,7 +4,7 @@ import application.math.Vector2;
 import javafx.scene.canvas.GraphicsContext;
 
 public abstract class Shape {
-
+	
 	/**
 	 * The xy representing the center of the shape
 	 */
@@ -24,15 +24,21 @@ public abstract class Shape {
 	 * Normals to each face
 	 */
 	protected Vector2[] faceNormals;
+	
+	/**
+	 * Type id used for fast type checking
+	 */
+	protected final int shapeType;
 
 	/**
 	 * @param position
 	 * @param angle
 	 */
-	public Shape(Vector2 position, float angle) {
+	public Shape(Vector2 position, float angle, int shapeType) {
 		super();
 		this.position = position;
 		this.angle = angle;
+		this.shapeType = shapeType;
 	}
 
 	/**
@@ -127,5 +133,21 @@ public abstract class Shape {
 	public Vector2[] getFaceNormals() {
 		return faceNormals;
 	}
+
+	/**
+	 * @return the shapeType
+	 */
+	public int getShapeType() {
+		return shapeType;
+	}
+
+	/**
+	 * @param position the position to set
+	 */
+	public void setPosition(Vector2 position) {
+		this.position = position;
+	}
+	
+	
 
 }

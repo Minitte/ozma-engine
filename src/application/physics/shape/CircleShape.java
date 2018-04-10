@@ -5,6 +5,8 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class CircleShape extends Shape {
 
+	public static final int TYPE_ID = 1;
+	
 	private static final int DEGREE = 16;
 	
 	private float radius;
@@ -16,7 +18,7 @@ public class CircleShape extends Shape {
 	 * @param radius
 	 */
 	public CircleShape(Vector2 position, float angle, float radius) {
-		super(position, angle);
+		super(position, angle, TYPE_ID);
 		this.radius = radius;
 		boxRadius = radius * 2;
 		
