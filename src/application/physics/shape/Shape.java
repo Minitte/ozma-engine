@@ -14,11 +14,16 @@ public abstract class Shape {
 	 * The angle or rotation of the shape in radians
 	 */
 	protected float angle;
-	
+
 	/**
 	 * List of vertices
 	 */
 	protected Vector2[] vertices;
+
+	/**
+	 * Normals to each face
+	 */
+	protected Vector2[] faceNormals;
 
 	/**
 	 * @param position
@@ -40,36 +45,60 @@ public abstract class Shape {
 
 	/**
 	 * Checks if a point is within shape
+	 * 
 	 * @param point
 	 * @return
 	 */
 	public abstract boolean pointWithin(Vector2 point);
-	
+
 	/**
 	 * Move to the spot
+	 * 
 	 * @param dest
 	 */
 	public abstract void moveTo(Vector2 dest);
-	
+
 	/**
 	 * Gets the point that is mostly aligned with the direction
-	 * @param direction a vector representing direction
+	 * 
+	 * @param direction
+	 *            a vector representing direction
 	 */
 	public abstract Vector2 getVertice(Vector2 direction);
-	
+
 	/**
 	 * the radius used for a quick check for potential collisions
+	 * 
 	 * @return
 	 */
 	public abstract float getLooseCheckRadius();
-	
+
+	/**
+	 * Calulates all of the face normals
+	 */
+	protected void calulateNormals() {
+		faceNormals = new Vector2[vertices.length];
+
+		for (int i = 0; i < faceNormals.length; i++) {
+
+			Vector2 v = vertices[(i + 1) % vertices.length].clone();
+
+			v.minus(vertices[i]);
+
+			faceNormals[i] = v.getNormal();
+
+			faceNormals[i].Normalize();
+
+		}
+	}
+
 	/**
 	 * @return the position
 	 */
 	public Vector2 getPosition() {
 		return position;
 	}
-	
+
 	/**
 	 * @return the angle
 	 */
@@ -83,6 +112,20 @@ public abstract class Shape {
 	 */
 	public void setAngle(float angle) {
 		this.angle = angle;
+	}
+
+	/**
+	 * @return the vertices
+	 */
+	public Vector2[] getVertices() {
+		return vertices;
+	}
+
+	/**
+	 * @return the faceNormals
+	 */
+	public Vector2[] getFaceNormals() {
+		return faceNormals;
 	}
 
 }
