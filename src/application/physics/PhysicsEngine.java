@@ -3,13 +3,12 @@
  */
 package application.physics;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import application.entity.BasicPhysicsEntity;
 import application.math.Vector2;
 import application.physics.shape.CircleShape;
-import application.physics.shape.RectShape;
 import application.physics.shape.Shape;
 
 /**
@@ -22,6 +21,7 @@ public class PhysicsEngine {
 	private static final float CORRECTION_SLOP = 0.01f;
 	
 	private List<BasicPhysicsEntity> entities;
+	private List<Potential> potentialCollisions;
 	
 	/**
 	 * @param entities
@@ -29,6 +29,7 @@ public class PhysicsEngine {
 	public PhysicsEngine(List<BasicPhysicsEntity> entities) {
 		super();
 		this.entities = entities;
+		potentialCollisions = new ArrayList<>();
 	}
 	
 	/**
@@ -36,38 +37,38 @@ public class PhysicsEngine {
 	 */
 	public void update(boolean parallel) {
 		
-		if (parallel) {
-			IntStream intStream = IntStream.range(0, entities.size());
-			
-			intStream.parallel().forEach(i -> {
-				BasicPhysicsEntity a = entities.get(i);
-				for (int j = i + 1; j < entities.size(); j++) {
-					BasicPhysicsEntity b = entities.get(j);
-					
-					
-					if (checkCollision(a, b)) {
-						CollisionManifold m = new CollisionManifold(a, b);
-						resolveCollision(m);
-						positionCorrection(m);
-					}
-				}
+		findPotentialCollisions();
+	}
+	
+	/**
+	 * Finds potential collisions based on the radius of the shapes
+	 */
+	private void findPotentialCollisions() {
+		for (int i = 0; i < entities.size(); i++) {
+			BasicPhysicsEntity a = entities.get(i);
+			for (int j = i + 1; j < entities.size(); j++) {
+				BasicPhysicsEntity b = entities.get(j);
 				
-			});
-		} else {
-			for (int i = 0; i < entities.size(); i++) {
-				BasicPhysicsEntity a = entities.get(i);
-				for (int j = i + 1; j < entities.size(); j++) {
-					BasicPhysicsEntity b = entities.get(j);
-					
-					
-					if (checkCollision(a, b)) {
-						CollisionManifold m = new CollisionManifold(a, b);
-						resolveCollision(m);
-						positionCorrection(m);
-					}
+				float dist = b.getPosition().clone().minus(a.getPosition()).getLengthSquared();
+				float rsq = a.getShape().getLooseCheckRadius() + b.getShape().getLooseCheckRadius();
+				rsq *= rsq;
+				if (dist <= rsq) {
+					potentialCollisions.add(new Potential(a, b));
 				}
 			}
 		}
+		
+	}
+	
+	/**
+	 * Checks if any of the potential collisions are actually collisions
+	 */
+	private void findActualCollisions() {
+		for (int i = 0; i < potentialCollisions.size(); i++) {
+			Potential pot = potentialCollisions.get(i);
+		}
+		
+		potentialCollisions.clear();
 	}
 
 	/**
@@ -139,62 +140,20 @@ public class PhysicsEngine {
 	 * @param entB
 	 * @return
 	 */
-	public boolean checkCollision(BasicPhysicsEntity entA, BasicPhysicsEntity entB) {
-		Shape shapeA = entA.getShape();
-		Shape shapeB = entB.getShape();
+	public boolean checkCollision(Shape a, Shape b) {
+		int typeA = a.getShapeType();
+		int typeB = b.getShapeType();
 		
-		// two circles
-		if (shapeA instanceof CircleShape && shapeB instanceof CircleShape) {
-			return checkCollision((CircleShape)shapeA, (CircleShape)shapeB);
-		} 
-		
-		// two rectangles
-		else if (shapeA instanceof RectShape && shapeB instanceof RectShape) {
-			return checkCollision((RectShape)shapeA, (RectShape)shapeB);
+		if (typeA == CircleShape.TYPE_ID && typeA == CircleShape.TYPE_ID) {
+			return circleVsCircle((CircleShape)a, (CircleShape)b);
 		}
 		
-		// anything else... try the cm
-		else {
-			CollisionManifold cm = new CollisionManifold(entA, entB);
-			return cm.getPenDepth() > 0f;
-		}
-		
-//		return false;
-	} 
-	
-	/**
-	 * Checks if another circle entity has collided or clipped.
-	 * @param a
-	 * @param b
-	 * @return
-	 */
-	public boolean checkCollision(CircleShape a, CircleShape b) {
-		float r = a.getRadius() + b.getRadius();
-		r *= r;
-		float distX = (a.getPosition().getX() - b.getPosition().getX());
-		distX *= distX;
-		float distY = (a.getPosition().getY() - b.getPosition().getY());
-		distY *= distY;
-		return r > distX + distY;
+		return false;
 	}
 	
-	/**
-	 * Checks if two rectangles had collided or clipped.
-	 * @param a
-	 * @param b
-	 * @return
-	 */
-	public boolean checkCollision(RectShape a, RectShape b) {
-		if (a.getPointB().getX() < b.getPointA().getX() || a.getPointA().getX() > b.getPointB().getX()) {
-			return false;
-		}
-		
-		if (a.getPointB().getY() < b.getPointA().getY() || a.getPointA().getY() > b.getPointB().getY()) {
-			return false;
-		}
-		
-		return true;
-	}
+
+	
+	
 	
 	/**
 	 * Returns the smaller value of the given
@@ -214,5 +173,21 @@ public class PhysicsEngine {
 	 */
 	private float max(float a, float b) {
 		return a >= b ? a : b;
+	}
+	
+	private class Potential {
+		BasicPhysicsEntity a, b;
+
+		/**
+		 * @param a
+		 * @param b
+		 */
+		public Potential(BasicPhysicsEntity a, BasicPhysicsEntity b) {
+			super();
+			this.a = a;
+			this.b = b;
+		}
+		
+		
 	}
 }
