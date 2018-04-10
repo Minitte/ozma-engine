@@ -58,15 +58,30 @@ public class RectShape extends Shape {
 	 */
 	@Override
 	public void moveTo(Vector2 dest) {
-//		Vector2 diff = dest.clone();
-//		diff.minus(position);
-//
-//		for (int i = 0 ; i < vertices.length; i++) {
-//			vertices[i].add(diff);
-//		}
-		
 		position = dest;
 		calculateVertices();
+	}
+	
+	/* (non-Javadoc)
+	 * @see application.physics.shape.Shape#getVertice(application.math.Vector2)
+	 */
+	@Override
+	public Vector2 getVertice(Vector2 direction) {
+		Vector2 best = null;
+		float min = Float.MAX_VALUE;
+		Vector2 nTarget = direction.clone().linearMutliply(width + height);
+		
+		for (int i = 0; i < vertices.length; i++) {
+			Vector2 diff = nTarget.clone().minus(vertices[i]);
+			float dist = diff.getLengthSquared();
+			
+			if (dist < min) {
+				best = vertices[i];
+				min = dist;
+			}
+		}
+		
+		return best;
 	}
 
 	/**

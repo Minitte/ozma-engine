@@ -52,6 +52,12 @@ public abstract class Shape {
 	public abstract void moveTo(Vector2 dest);
 	
 	/**
+	 * Gets the point that is mostly aligned with the direction
+	 * @param direction a vector representing direction
+	 */
+	public abstract Vector2 getVertice(Vector2 direction);
+	
+	/**
 	 * @return the position
 	 */
 	public Vector2 getPosition() {

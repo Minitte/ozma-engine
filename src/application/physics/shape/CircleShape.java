@@ -70,6 +70,14 @@ public class CircleShape extends Shape {
 		//calculateVertices();
 	}
 	
+	/* (non-Javadoc)
+	 * @see application.physics.shape.Shape#getVertice(application.math.Vector2)
+	 */
+	@Override
+	public Vector2 getVertice(Vector2 direction) {
+		return direction.clone().Normalize().linearMutliply(radius);
+	}
+	
 	/**
 	 * @return the radius
 	 */
