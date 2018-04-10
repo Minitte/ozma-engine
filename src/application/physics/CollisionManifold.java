@@ -152,9 +152,9 @@ public class CollisionManifold {
 		
 		float depth = n.getLength();
 		
-		n.Normalize();
+//		n.Normalize();
 		
-		normal = n;
+		normal = a.getFaceNormal(a.getPosition().clone().minus(b.getPosition())).Normalize();
 		
 		return depth;
 	}

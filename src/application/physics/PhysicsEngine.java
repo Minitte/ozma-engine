@@ -92,7 +92,7 @@ public class PhysicsEngine {
 		
 		// relative velocity in normal direction
 		Vector2 normal = cm.getNormal();
-		float velAlongNormal = rv.dot(normal);
+		float velAlongNormal = normal.dot(rv);
 		
 		// do nothing for separating directions
 		if (velAlongNormal > 0f) {
@@ -150,11 +150,13 @@ public class PhysicsEngine {
 		
 		// projection order
 		
-		if (a.getPosition().getLengthSquared() < b.getPosition().getLengthSquared()) {
-			return projectionCheck(a, b);
-		} else {
-			return projectionCheck(b, a);
-		}
+		return projectionCheck(a, b);
+		
+//		if (a.getPosition().getLengthSquared() < b.getPosition().getLengthSquared()) {
+//			return projectionCheck(a, b);
+//		} else {
+//			return projectionCheck(b, a);
+//		}
 		
 	}
 	
@@ -165,14 +167,14 @@ public class PhysicsEngine {
 	 * @return
 	 */
 	public boolean projectionCheck(Shape a, Shape b) {
-		Vector2 collisionVector = b.getPosition().clone().minus(a.getPosition()).Normalize();
-		Vector2 rectContact = b.getVertice(collisionVector);
-		Vector2 circContact = a.getVertice(collisionVector.clone().linearMutliply(-1f));
+		Vector2 collisionVectorA = b.getPosition().clone().minus(a.getPosition()).Normalize();
+		Vector2 contactB = b.getVertice(a);
+		Vector2 contactA = a.getVertice(b);
 		
-		float rectDist = collisionVector.dot(rectContact);
-		float circDist = collisionVector.dot(circContact);
+		float distB = collisionVectorA.dot(contactB);
+		float distA = collisionVectorA.dot(contactA);
 		
-		return circDist - rectDist <= 0;
+		return distB - distA > 0;
 	}
 	
 	/**

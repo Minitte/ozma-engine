@@ -185,9 +185,9 @@ public class Main extends Application {
 			 Shape shape = null;
 			 
 			 if (i % 2 == 0) {
-				 shape = new CircleShape(pos, 0, 50f);
+				 shape = new CircleShape(pos, 0f, 50f);
 			 } else {
-				 shape = new RectShape(pos, 0f, 50f, 50f);
+				 shape = new RectShape(pos, (float)Math.PI / rand.nextFloat(), 50f, 50f);
 			 }
 			 
 			 PhysicsProperties prop = new PhysicsProperties(5f, 0.5f);
