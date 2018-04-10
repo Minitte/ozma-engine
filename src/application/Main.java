@@ -9,6 +9,7 @@ import application.entity.Entity;
 import application.math.Vector2;
 import application.physics.PhysicsEngine;
 import application.physics.PhysicsProperties;
+import application.physics.shape.CircleShape;
 import application.physics.shape.RectShape;
 import application.physics.shape.Shape;
 import javafx.animation.KeyFrame;
@@ -177,17 +178,17 @@ public class Main extends Application {
 
 	private void initEntities() {
 		Random rand = new Random();
-
-//		 for (int i = 0; i < 1; i++) {
-//			 entities.add(new CircleEntity(new Vector2(rand.nextFloat() * START_WIDTH,
-//			 rand.nextFloat() * START_HEIGHT), rand.nextFloat() * 100f));
-//		 }
 		 
-		 for (int i = 0; i < 1000; i++) {
+		 for (int i = 0; i < 6; i++) {
 			 Vector2 pos = new Vector2(rand.nextFloat() * START_WIDTH, rand.nextFloat() * START_HEIGHT);
 			 
-//			 RectShape shape = new RectShape(pos, 0f, 50f, 50f);
-			 Shape shape = new RectShape(pos, 0f, 50f, 50f);
+			 Shape shape = null;
+			 
+			 if (i % 2 == 0) {
+				 shape = new CircleShape(pos, 0, 50f);
+			 } else {
+				 shape = new RectShape(pos, 0f, 50f, 50f);
+			 }
 			 
 			 PhysicsProperties prop = new PhysicsProperties(5f, 0.5f);
 			 prop.setVelocityDamping(1.0f);
