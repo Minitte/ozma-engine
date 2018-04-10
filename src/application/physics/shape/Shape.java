@@ -14,6 +14,11 @@ public abstract class Shape {
 	 * The angle or rotation of the shape in radians
 	 */
 	protected float angle;
+	
+	/**
+	 * List of vertices
+	 */
+	protected Vector2[] vertices;
 
 	/**
 	 * @param position
@@ -41,20 +46,18 @@ public abstract class Shape {
 	public abstract boolean pointWithin(Vector2 point);
 	
 	/**
+	 * Move to the spot
+	 * @param dest
+	 */
+	public abstract void moveTo(Vector2 dest);
+	
+	/**
 	 * @return the position
 	 */
 	public Vector2 getPosition() {
 		return position;
 	}
-
-	/**
-	 * @param position
-	 *            the position to set
-	 */
-	public void setPosition(Vector2 position) {
-		this.position = position;
-	}
-
+	
 	/**
 	 * @return the angle
 	 */

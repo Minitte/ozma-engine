@@ -25,7 +25,7 @@ public class BasicPhysicsEntity extends Entity {
 		Vector2 scaledVelocity = velocity.clone();
 		scaledVelocity.linearMutliply(delta);
 		position.add(scaledVelocity);
-		shape.setPosition(position);
+		shape.moveTo(position);
 
 		// apply damping effects
 		Vector2 dampingVector = new Vector2(properties.getVelocityDamping(), properties.getVelocityDamping());
@@ -42,6 +42,14 @@ public class BasicPhysicsEntity extends Entity {
 	@Override
 	public boolean pointWithin(Vector2 point) {
 		return shape.pointWithin(point);
+	}
+	
+	/**
+	 * Applies a force
+	 * @param force
+	 */
+	public void applyForce(Vector2 force) {
+		velocity.add(force);
 	}
 
 	/**
