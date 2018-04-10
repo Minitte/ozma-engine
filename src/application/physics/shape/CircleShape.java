@@ -7,7 +7,7 @@ public class CircleShape extends Shape {
 
 	public static final int TYPE_ID = 1;
 	
-	private static final int DEGREE = 16;
+	private static final int DEGREE = 4;
 	
 	private float radius;
 	private float boxRadius;
@@ -23,6 +23,7 @@ public class CircleShape extends Shape {
 		boxRadius = radius * 2;
 		
 		calculateVertices();
+		calulateNormals();
 	}
 	
 	/**

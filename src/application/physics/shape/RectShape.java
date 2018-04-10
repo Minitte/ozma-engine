@@ -30,6 +30,11 @@ public class RectShape extends Shape {
 	@Override
 	public void render(GraphicsContext gc, float delta) {
 		gc.strokeRect(vertices[0].getX(), vertices[0].getY(), width, height);
+		
+		for (int i = 0; i < faceNormals.length; i++) {
+			Vector2 v = position.clone().add(faceNormals[i].clone().linearMutliply(5f));
+			gc.strokeLine(position.getX(), position.getY(), v.getX(), v.getY());
+		}
 
 	}
 	

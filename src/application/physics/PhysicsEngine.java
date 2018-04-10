@@ -69,8 +69,11 @@ public class PhysicsEngine {
 			
 			if (checkCollision(pot.a.getShape(), pot.b.getShape())) {
 				CollisionManifold cm = new CollisionManifold(pot.a, pot.b);
-				resolveCollision(cm);
-				positionCorrection(cm);
+				
+				if (cm.getPenDepth() > 0) {
+					resolveCollision(cm);
+					positionCorrection(cm);
+				}
 			}
 		}
 		
@@ -148,16 +151,17 @@ public class PhysicsEngine {
 	 */
 	public boolean checkCollision(Shape a, Shape b) {
 		
-		// projection order
+//		Vector2 colVector = b.getPosition().clone().minus(a.getPosition()).Normalize();
+	
+		Vector2[] checkAxis = a.getFaceNormals();
 		
-		return projectionCheck(a, b);
+		for (int i = 0; i < checkAxis.length; i++) {
+			if (!projectionCheck(b, a, checkAxis[i]) && !projectionCheck(a, b, checkAxis[i])) {
+				return false;
+			}
+		}
 		
-//		if (a.getPosition().getLengthSquared() < b.getPosition().getLengthSquared()) {
-//			return projectionCheck(a, b);
-//		} else {
-//			return projectionCheck(b, a);
-//		}
-		
+		return true;
 	}
 	
 	/**
@@ -166,13 +170,15 @@ public class PhysicsEngine {
 	 * @param b
 	 * @return
 	 */
-	public boolean projectionCheck(Shape a, Shape b) {
-		Vector2 collisionVectorA = b.getPosition().clone().minus(a.getPosition()).Normalize();
+	public boolean projectionCheck(Shape a, Shape b, Vector2 collisionVector) {
 		Vector2 contactB = b.getVertice(a);
 		Vector2 contactA = a.getVertice(b);
 		
-		float distB = collisionVectorA.dot(contactB);
-		float distA = collisionVectorA.dot(contactA);
+		float distA = collisionVector.dot(contactA);
+		float distB = collisionVector.dot(contactB);
+		
+//		distA = distA > 0 ? distA : -distA;
+//		distB = distB > 0 ? distB : -distB;
 		
 		return distB - distA > 0;
 	}

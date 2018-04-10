@@ -101,7 +101,6 @@ public abstract class Shape {
 			faceNormals[i] = v.getNormal();
 
 			faceNormals[i].Normalize();
-
 		}
 	}
 	
