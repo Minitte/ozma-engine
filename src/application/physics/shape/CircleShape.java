@@ -8,7 +8,7 @@ public class CircleShape extends Shape {
 
 	public static final int TYPE_ID = 1;
 	
-	private static final int DEGREE = 16;
+	private static final int DEGREE = 4;
 	
 	private float radius;
 	private float boxRadius;
@@ -80,15 +80,8 @@ public class CircleShape extends Shape {
 
 	@Override
 	public void moveTo(Vector2 dest) {
-		Vector2 diff = dest.clone();
-		diff.minus(position);
-
-		for (int i = 0 ; i < vertices.length; i++) {
-			vertices[i].add(diff);
-		}
-		
 		position = dest;
-		//calculateVertices();
+		calculateVertices();
 	}
 	
 	/* (non-Javadoc)
@@ -111,7 +104,7 @@ public class CircleShape extends Shape {
 	 * @see application.physics.shape.Shape#getFaceNormal(application.math.Vector2)
 	 */
 	@Override
-	public Vector2 getFaceNormal(Vector2 dir) {
+	public Vector2 getFaceNormalTowards(Vector2 dir) {
 		return dir.clone().Normalize();
 	}
 	

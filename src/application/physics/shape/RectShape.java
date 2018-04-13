@@ -37,6 +37,7 @@ public class RectShape extends Shape {
 			Vector2 v = position.clone().add(faceNormals[i].clone().linearMutliply(5f));
 			gc.strokeLine(position.getX(), position.getY(), v.getX(), v.getY());
 			gc.fillOval(vertices[i].getX() - 2f, vertices[i].getY() - 2f, 4f, 4f);
+			gc.fillOval(v.getX() - 2f, v.getY() - 2f, 4f, 4f);
 		}
 		
 		colour = Color.BLACK;

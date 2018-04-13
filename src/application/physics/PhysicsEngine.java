@@ -75,7 +75,7 @@ public class PhysicsEngine {
 				CollisionManifold cm = new CollisionManifold(pot.a, pot.b);
 				
 				if (cm.getPenDepth() > 0) {
-					//resolveCollision(cm);
+					resolveCollision(cm.getEntityA(), cm.getEntityB());
 					//positionCorrection(cm);
 				}
 			}
@@ -88,32 +88,20 @@ public class PhysicsEngine {
 	 * Resolves collision between two entities
 	 * @param cm
 	 */
-	private void resolveCollision(CollisionManifold cm) {
+	private void resolveCollision(BasicPhysicsEntity a, BasicPhysicsEntity b) {
 		
-		BasicPhysicsEntity a = cm.getEntityA();
-		BasicPhysicsEntity b = cm.getEntityB();
+//		BasicPhysicsEntity a = cm.getEntityA();
+//		BasicPhysicsEntity b = cm.getEntityB();
 		
-		// relative velocity
-		Vector2 rv = b.getVelocity().clone();
-		rv.minus(a.getVelocity());
-		
-		// relative velocity in normal direction
-		Vector2 colNormal = cm.getNormal(); // collision normal
-		float velAlongNormal = colNormal.dot(rv);
-		
-		// do nothing for separating directions
-		if (velAlongNormal > 0f) {
-			return;
-		}
+		Vector2 a2bDir = b.getPosition().clone().minus(a.getPosition()).Normalize();
+		Vector2 b2aDir = a2bDir.clone().linearMutliply(-1f);
 		
 		// vector based on the face pointing away from the center of the shape
-		Vector2 a2bVector = b.getPosition().clone().minus(a.getPosition()).Normalize();
-		Vector2 b2aVector = a2bVector.clone().linearMutliply(-1f); // flip direction of a2b
-		Vector2 faceA = a.getShape().getFaceNormal(a2bVector).clone();
-		Vector2 faceB = b.getShape().getFaceNormal(b2aVector).clone();
+		Vector2 faceA = a.getShape().getFaceNormalTowards(a2bDir).clone();
+		Vector2 faceB = b.getShape().getFaceNormalTowards(b2aDir).clone();
 		
-		a.applyForce(faceB.linearMutliply(2f));
-		b.applyForce(faceA.linearMutliply(2f));
+		a.applyForce(faceB.linearMutliply(5f));
+		b.applyForce(faceA.linearMutliply(5f));
 	}
 	
 	/**

@@ -116,17 +116,29 @@ public abstract class Shape {
 	 * @param dir
 	 * @return
 	 */
-	public Vector2 getFaceNormal(Vector2 dir) {
+	public Vector2 getFaceNormalTowards(Vector2 dir) {
+		Vector2 posDir = dir.clone().Normalize();
 		Vector2 best = null;
 		float max = -Float.MAX_VALUE;
 		
 		for (int i = 0; i < faceNormals.length; i++) { 
-			if (dir.dot(faceNormals[i]) > max) {
+			float scalar = posDir.dot(faceNormals[i]);
+			if (scalar > max) {
 				best = faceNormals[i];
+				max = scalar; 
 			}
 		}
 		
 		return best;
+	}
+	
+	/**
+	 * Gets the face normal closest to the 
+	 * @param shape
+	 * @return
+	 */
+	public Vector2 getFaceNormalTowards(Shape shape) {
+		return getFaceNormalTowards(shape.getPosition().clone().minus(position));
 	}
 	
 	/**
