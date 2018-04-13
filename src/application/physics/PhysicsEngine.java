@@ -7,8 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import application.entity.BasicPhysicsEntity;
+import application.math.Projection;
 import application.math.Vector2;
+import application.physics.shape.CircleShape;
+import application.physics.shape.RectShape;
 import application.physics.shape.Shape;
+import javafx.scene.paint.Color;
 
 /**
  * @author Davis
@@ -71,8 +75,8 @@ public class PhysicsEngine {
 				CollisionManifold cm = new CollisionManifold(pot.a, pot.b);
 				
 				if (cm.getPenDepth() > 0) {
-					resolveCollision(cm);
-					positionCorrection(cm);
+					//resolveCollision(cm);
+					//positionCorrection(cm);
 				}
 			}
 		}
@@ -84,7 +88,7 @@ public class PhysicsEngine {
 	 * Resolves collision between two entities
 	 * @param cm
 	 */
-	public void resolveCollision(CollisionManifold cm) {
+	private void resolveCollision(CollisionManifold cm) {
 		
 		BasicPhysicsEntity a = cm.getEntityA();
 		BasicPhysicsEntity b = cm.getEntityB();
@@ -94,35 +98,22 @@ public class PhysicsEngine {
 		rv.minus(a.getVelocity());
 		
 		// relative velocity in normal direction
-		Vector2 normal = cm.getNormal();
-		float velAlongNormal = normal.dot(rv);
+		Vector2 colNormal = cm.getNormal(); // collision normal
+		float velAlongNormal = colNormal.dot(rv);
 		
 		// do nothing for separating directions
 		if (velAlongNormal > 0f) {
 			return;
 		}
 		
-		PhysicsProperties aProperties = a.getProperties();
-		PhysicsProperties bProperties = b.getProperties();
+		// vector based on the face pointing away from the center of the shape
+		Vector2 a2bVector = b.getPosition().clone().minus(a.getPosition()).Normalize();
+		Vector2 b2aVector = a2bVector.clone().linearMutliply(-1f); // flip direction of a2b
+		Vector2 faceA = a.getShape().getFaceNormal(a2bVector).clone();
+		Vector2 faceB = b.getShape().getFaceNormal(b2aVector).clone();
 		
-		// pick smaller restitution
-		float e = min(aProperties.getRestitution(), bProperties.getRestitution());
-		
-		// impulse scalar
-		float j = -(1f + e) * velAlongNormal;
-		j /= aProperties.getInvMass() + bProperties.getInvMass();
-		
-		// apply impulse
-		Vector2 impulseA = normal.clone();
-		impulseA.linearMutliply(j);
-		
-		Vector2 impulseB = impulseA.clone();
-		
-		impulseA.linearMutliply(aProperties.getInvMass());
-		impulseB.linearMutliply(bProperties.getInvMass());
-		
-		a.getVelocity().minus(impulseA);
-		b.getVelocity().add(impulseB);
+		a.applyForce(faceB.linearMutliply(2f));
+		b.applyForce(faceA.linearMutliply(2f));
 	}
 	
 	/**
@@ -150,18 +141,36 @@ public class PhysicsEngine {
 	 * @return
 	 */
 	public boolean checkCollision(Shape a, Shape b) {
-		
-//		Vector2 colVector = b.getPosition().clone().minus(a.getPosition()).Normalize();
-	
-		Vector2[] checkAxis = a.getFaceNormals();
-		
-		for (int i = 0; i < checkAxis.length; i++) {
-			if (!projectionCheck(b, a, checkAxis[i]) && !projectionCheck(a, b, checkAxis[i])) {
-				return false;
-			}
+		boolean collided = false;
+		// circle vs circle
+		if (a.getShapeType() == CircleShape.TYPE_ID && b.getShapeType() == CircleShape.TYPE_ID) {
+			collided = radiusCheck((CircleShape)a, (CircleShape)b);
 		}
 		
-		return true;
+		// rect vs rect
+		else if (a.getShapeType() == RectShape.TYPE_ID && b.getShapeType() == RectShape.TYPE_ID) {
+			collided = axisProjectionCheck((RectShape)a, (RectShape)b);
+		}
+		
+		// circle vs other shapes
+		else if (a.getShapeType() == CircleShape.TYPE_ID) {
+			collided = outerVertexCheck((CircleShape)a, b);
+		}
+		
+		else if (b.getShapeType() == CircleShape.TYPE_ID) {
+			collided = outerVertexCheck((CircleShape)b, a);
+		}
+		
+		// colour
+		if (collided) {
+			a.setColour(Color.RED);
+			b.setColour(Color.RED);
+		} else {
+			a.setColour(Color.BLUE);
+			b.setColour(Color.BLUE);
+		}
+		
+		return collided;
 	}
 	
 	/**
@@ -170,17 +179,52 @@ public class PhysicsEngine {
 	 * @param b
 	 * @return
 	 */
-	public boolean projectionCheck(Shape a, Shape b, Vector2 collisionVector) {
-		Vector2 contactB = b.getVertice(a);
-		Vector2 contactA = a.getVertice(b);
+	private boolean axisProjectionCheck(RectShape a, RectShape b) {
+		Vector2[] axisA = a.getFaceNormals();
+		Vector2[] axisB = b.getFaceNormals();
 		
-		float distA = collisionVector.dot(contactA);
-		float distB = collisionVector.dot(contactB);
+		for (int i = 0; i < axisA.length; i++) {
+			Projection projA = a.projectOnAxis(axisA[i]);
+			Projection projB = b.projectOnAxis(axisA[i]);
+			if (!Projection.overlap(projA, projB)) {
+				return false;
+			}
+		}
 		
-//		distA = distA > 0 ? distA : -distA;
-//		distB = distB > 0 ? distB : -distB;
+		for (int i = 0; i < axisB.length; i++) {
+			Projection projA = a.projectOnAxis(axisB[i]);
+			Projection projB = b.projectOnAxis(axisB[i]);
+			if (!Projection.overlap(projA, projB)) {
+				return false;
+			}
+		}
 		
-		return distB - distA > 0;
+		return true;
+	}
+	
+	/**
+	 * radius + position based collision checking
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	private boolean radiusCheck(CircleShape a, CircleShape b) {
+		Vector2 dist = a.getPosition().clone().minus(b.getPosition());
+		float distSq = dist.getLengthSquared();
+		float radABSq = a.getRadius() + b.getRadius();
+		radABSq *= radABSq;
+		return distSq < radABSq;
+	}
+	
+	/**
+	 * 
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	private boolean outerVertexCheck(CircleShape a, Shape b) {
+		Vector2 vertB = b.getVertice(a);
+		return a.pointWithin(vertB);
 	}
 	
 	/**

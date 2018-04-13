@@ -2,12 +2,13 @@ package application.physics.shape;
 
 import application.math.Vector2;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 public class CircleShape extends Shape {
 
 	public static final int TYPE_ID = 1;
 	
-	private static final int DEGREE = 4;
+	private static final int DEGREE = 16;
 	
 	private float radius;
 	private float boxRadius;
@@ -37,7 +38,7 @@ public class CircleShape extends Shape {
 		double rad = 0;
 		for (int i = 0 ; i < vertices.length; i++) {
 
-			vertices[i] = new Vector2((float)Math.cos(rad), (float)Math.sin(rad));
+			vertices[i] = new Vector2((float)Math.cos(rad), (float)Math.sin(rad)).linearMutliply(radius).add(position);
 
 			rad += radInc;
 
@@ -54,7 +55,16 @@ public class CircleShape extends Shape {
 
 	@Override
 	public void render(GraphicsContext gc, float delta) {
+		gc.setStroke(colour);
 		gc.strokeOval(position.getX() - radius, position.getY() - radius, boxRadius, boxRadius);
+		
+		for (int i = 0; i < faceNormals.length; i++) {
+			Vector2 v = position.clone().add(faceNormals[i].clone().linearMutliply(5f));
+			gc.strokeLine(position.getX(), position.getY(), v.getX(), v.getY());
+			gc.fillOval(vertices[i].getX() - 2f, vertices[i].getY() - 2f, 4f, 4f);
+		}
+		
+		colour = Color.BLACK;
 	}
 	
 	@Override

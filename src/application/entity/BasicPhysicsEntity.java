@@ -8,6 +8,7 @@ import javafx.scene.canvas.GraphicsContext;
 public class BasicPhysicsEntity extends Entity {
 	private Shape shape;
 	private PhysicsProperties properties;
+	private boolean frozen;
 
 	/**
 	 * @param position
@@ -22,6 +23,11 @@ public class BasicPhysicsEntity extends Entity {
 
 	@Override
 	public void update(float delta) {
+		if (frozen) {
+			velocity.linearMutliply(0f);
+		}
+		
+		//velocity.add(new Vector2(0f, 5f));
 		Vector2 scaledVelocity = velocity.clone();
 		scaledVelocity.linearMutliply(delta);
 		position.add(scaledVelocity);
@@ -81,5 +87,21 @@ public class BasicPhysicsEntity extends Entity {
 	public void setProperties(PhysicsProperties properties) {
 		this.properties = properties;
 	}
+
+	/**
+	 * @return the frozen
+	 */
+	public boolean isFrozen() {
+		return frozen;
+	}
+
+	/**
+	 * @param frozen the frozen to set
+	 */
+	public void setFrozen(boolean frozen) {
+		this.frozen = frozen;
+	}
+	
+	
 
 }

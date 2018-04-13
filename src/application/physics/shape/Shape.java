@@ -1,7 +1,9 @@
 package application.physics.shape;
 
+import application.math.Projection;
 import application.math.Vector2;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 public abstract class Shape {
 	
@@ -29,6 +31,11 @@ public abstract class Shape {
 	 * Type id used for fast type checking
 	 */
 	protected final int shapeType;
+	
+	/**
+	 * Colour of the shape
+	 */
+	protected Color colour = Color.BLACK;
 
 	/**
 	 * @param position
@@ -111,7 +118,7 @@ public abstract class Shape {
 	 */
 	public Vector2 getFaceNormal(Vector2 dir) {
 		Vector2 best = null;
-		float max = Float.MIN_VALUE;
+		float max = -Float.MAX_VALUE;
 		
 		for (int i = 0; i < faceNormals.length; i++) { 
 			if (dir.dot(faceNormals[i]) > max) {
@@ -120,6 +127,28 @@ public abstract class Shape {
 		}
 		
 		return best;
+	}
+	
+	/**
+	 * Projects onto axis
+	 * @param axis
+	 * @return
+	 */
+	public Projection projectOnAxis(Vector2 axis) {
+		float min = axis.dot(vertices[0]);
+		float max = min;
+		
+		for (int i = 0; i < vertices.length; i++) {
+			float p = axis.dot(vertices[i]);
+			
+			if (p < min) {
+				min = p;
+			} else if (p > max) {
+				max = p;
+			}
+		}
+		
+		return new Projection(min, max);
 	}
 
 	/**
@@ -170,6 +199,20 @@ public abstract class Shape {
 	 */
 	public void setPosition(Vector2 position) {
 		this.position = position;
+	}
+
+	/**
+	 * @return the colour
+	 */
+	public Color getColour() {
+		return colour;
+	}
+
+	/**
+	 * @param colour the colour to set
+	 */
+	public void setColour(Color colour) {
+		this.colour = colour;
 	}
 	
 	
