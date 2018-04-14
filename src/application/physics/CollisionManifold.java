@@ -142,7 +142,7 @@ public class CollisionManifold {
 		Vector2 p = new Vector2(px, py);
 		Vector2 n = b.getPosition().clone();
 		n.minus(p);
-		if (!a.pointWithin(b.getPosition())) {
+		if (a.pointWithin(b.getPosition())) {
 			n.linearMutliply(-1f);
 		}
 		
@@ -152,9 +152,9 @@ public class CollisionManifold {
 		
 		float depth = n.getLength();
 		
-		n.Normalize();
+//		n.Normalize();
 		
-		normal = n;
+		normal = a.getFaceNormalTowards(b.getPosition().clone().minus(a.getPosition())).clone().Normalize();
 		
 		return depth;
 	}

@@ -2,11 +2,16 @@ package application.physics.shape;
 
 import application.math.Vector2;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 public class RectShape extends Shape {
 
+	public static final int TYPE_ID = 2;
+	
 	private float width;
 	private float height;
+	private float looseCheckRadius;
+	
 	/**
 	 * @param position
 	 * @param angle
@@ -14,16 +19,28 @@ public class RectShape extends Shape {
 	 * @param height
 	 */
 	public RectShape(Vector2 position, float angle, float width, float height) {
-		super(position, angle);
+		super(position, angle, TYPE_ID);
 		this.width = width;
 		this.height = height;
+		looseCheckRadius = (float)Math.sqrt((width * width) + (height * height)) / 2f;
 		
 		calculateVertices();
+		calulateNormals();
 	}
 
 	@Override
 	public void render(GraphicsContext gc, float delta) {
+		gc.setStroke(colour);
 		gc.strokeRect(vertices[0].getX(), vertices[0].getY(), width, height);
+		
+		for (int i = 0; i < faceNormals.length; i++) {
+			Vector2 v = position.clone().add(faceNormals[i].clone().linearMutliply(5f));
+			gc.strokeLine(position.getX(), position.getY(), v.getX(), v.getY());
+			gc.fillOval(vertices[i].getX() - 2f, vertices[i].getY() - 2f, 4f, 4f);
+			gc.fillOval(v.getX() - 2f, v.getY() - 2f, 4f, 4f);
+		}
+		
+		colour = Color.BLACK;
 
 	}
 	
@@ -58,15 +75,46 @@ public class RectShape extends Shape {
 	 */
 	@Override
 	public void moveTo(Vector2 dest) {
-//		Vector2 diff = dest.clone();
-//		diff.minus(position);
-//
-//		for (int i = 0 ; i < vertices.length; i++) {
-//			vertices[i].add(diff);
-//		}
-		
 		position = dest;
 		calculateVertices();
+	}
+	
+	/* (non-Javadoc)
+	 * @see application.physics.shape.Shape#getVertice(application.math.Vector2)
+	 */
+	@Override
+	public Vector2 getVertice(Vector2 direction) {
+		Vector2 best = null;       
+		float min = Float.MAX_VALUE;
+		Vector2 nTarget = direction.clone().linearMutliply(width + height).add(position);
+		
+		for (int i = 0; i < vertices.length; i++) {
+			Vector2 diff = nTarget.clone().minus(vertices[i]);
+			float dist = diff.getLengthSquared();
+			
+			if (dist < min) {
+				best = vertices[i];
+				min = dist;
+			}
+		}
+		
+		return best;
+	}
+	
+	/* (non-Javadoc)
+	 * @see application.physics.shape.Shape#getVertice(application.physics.shape.Shape)
+	 */
+	@Override
+	public Vector2 getVertice(Shape pos) {
+		return getVertice(pos.getPosition().clone().minus(position).Normalize());
+	}
+	
+	/* (non-Javadoc)
+	 * @see application.physics.shape.Shape#getLooseCheckRadius()
+	 */
+	@Override
+	public float getLooseCheckRadius() {
+		return looseCheckRadius;
 	}
 
 	/**
