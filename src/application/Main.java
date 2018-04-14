@@ -167,8 +167,8 @@ public class Main extends Application {
 					mouseVelocity.minus(selected.getPosition());
 					mouseVelocity.linearMutliply(10f);
 					selected.setPosition(mouseVector);
-//					selected.setVelocity(mouseVelocity);
-					selected.setVelocity(new Vector2(0f, 0f));
+					selected.setVelocity(mouseVelocity);
+//					selected.setVelocity(new Vector2(0f, 0f));
 				}
 				
 			}

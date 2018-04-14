@@ -109,17 +109,19 @@ public class PhysicsEngine {
 		float e = propA.getRestitution() < propB.getRestitution() ? propA.getRestitution() : propB.getRestitution();
 		
 		// scalar along normal
-		Vector2 rVelocity = b.getVelocity().clone().minus(a.getVelocity());
-		float dirScalar = a2bDir.dot(rVelocity);
+		Vector2 rVelocity = b.getVelocity().clone().add(a.getVelocity());
+		float dirScalar = rVelocity.dot(a2bDir);
 		dirScalar = dirScalar > 0 ? dirScalar : -dirScalar;
 		
 		// impluse
 		float j = (-(1 + e)) * dirScalar;
 		j /= propA.getInvMass() + propB.getInvMass();
 		
+		j = j > 0 ? j : -j;
+		
 		// apply force
-		a.applyForce(faceB.linearMutliply(j));
-		b.applyForce(faceA.linearMutliply(j));
+		a.applyForce(faceB.linearMutliply(j * propA.getInvMass()));
+		b.applyForce(faceA.linearMutliply(j * propB.getInvMass()));
 	}
 	
 	/**
