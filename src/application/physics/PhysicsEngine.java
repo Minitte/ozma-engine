@@ -34,6 +34,14 @@ public class PhysicsEngine {
 		this.entities = entities;
 		potentialCollisions = new ArrayList<>();
 	}
+
+	/**
+	 * Clears the engine, removing all references to current entities and collisions.
+	 */
+	public void clearEngine() {
+		entities.clear();
+		potentialCollisions.clear();
+	}
 	
 	/**
 	 * Performs collision checks and resolves them
@@ -267,7 +275,6 @@ public class PhysicsEngine {
 			this.a = a;
 			this.b = b;
 		}
-		
-		
+
 	}
 }

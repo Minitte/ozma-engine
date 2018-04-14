@@ -1,9 +1,5 @@
 package application;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import application.entity.BasicPhysicsEntity;
 import application.entity.Entity;
 import application.math.Vector2;
@@ -12,6 +8,7 @@ import application.physics.PhysicsProperties;
 import application.physics.shape.CircleShape;
 import application.physics.shape.RectShape;
 import application.physics.shape.Shape;
+import application.ui.EntityButton;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -24,6 +21,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class Main extends Application {
 
@@ -75,6 +76,9 @@ public class Main extends Application {
 		Canvas canvas = new Canvas(START_WIDTH, START_HEIGHT);
 		root.getChildren().add(canvas);
 
+		// Initialize the user interface
+		initUserInterface(root);
+
 		// use this to draw
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -120,6 +124,95 @@ public class Main extends Application {
 
 		// show window
 		primaryStage.show();
+	}
+
+	/**
+	 * Initializes the game's user interface.
+	 * @param group the parent root to add the buttons to
+	 */
+	private void initUserInterface(Group group) {
+
+		// Location of the buttons
+		Vector2 circleButtonLocation = new Vector2(20f, 50f);
+		Vector2 rectangleButtonLocation = new Vector2(20f, 80f);
+		Vector2 clearButtonLocation = new Vector2(20f, 110f);
+		Vector2 initializeButtonLocation = new Vector2(20f, 140f);
+
+		// Create the buttons
+		EntityButton circleSpawner = new EntityButton(circleButtonLocation, "Spawn circle");
+		EntityButton rectangleSpawner = new EntityButton(rectangleButtonLocation, "Spawn rectangle");
+		EntityButton clearButton = new EntityButton(clearButtonLocation, "Clear entities");
+		EntityButton initializeButton = new EntityButton(initializeButtonLocation, "Initialize entities");
+
+		// Physics properties
+		PhysicsProperties prop = new PhysicsProperties(5f, 0.5f);
+		prop.setVelocityDamping(1.0f);
+
+		// Onclick listener for the circle spawner button
+		circleSpawner.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				Random rand = new Random();
+
+				// Shape position (center)
+				Vector2 shapePosition = new Vector2(START_WIDTH / 2, START_HEIGHT / 2);
+
+				//Shape type
+				Shape circleShape = new CircleShape(shapePosition, 0f, 50f);
+
+				// Entity for spawning
+				BasicPhysicsEntity circle = new BasicPhysicsEntity(shapePosition, circleShape, prop);
+
+				// Apply some random force to offset its position
+				circle.setVelocity(new Vector2(rand.nextFloat() * 50, rand.nextFloat() * 50));
+
+				// Add the new entity to the game
+				addEntity(circle);
+			}
+		});
+
+		// Onclick listener for the rectangle spawner button
+		rectangleSpawner.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				Random rand = new Random();
+
+				// Shape position (center)
+				Vector2 shapePosition = new Vector2(START_WIDTH / 2, START_HEIGHT / 2);
+
+				// Shape type
+				Shape rectangleShape = new RectShape(shapePosition, (float)Math.PI / rand.nextFloat(), 50f, 50f);
+
+				// Entities for spawning
+				BasicPhysicsEntity rectangle = new BasicPhysicsEntity(shapePosition, rectangleShape, prop);
+
+				// Apply some random force to offset its position
+				rectangle.setVelocity(new Vector2(rand.nextFloat() * 50, rand.nextFloat() * 50));
+
+				// Add the new entity to the game
+				addEntity(rectangle);
+			}
+		});
+
+		// Onclick listener for the clear entities button.
+		clearButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				clearEntities();
+			}
+		});
+
+		// Onclick listener for the initialize entities button.
+		initializeButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				initEntities();
+			}
+		});
+
+
+		// Add the buttons
+		group.getChildren().add(circleSpawner);
+		group.getChildren().add(rectangleSpawner);
+		group.getChildren().add(clearButton);
+		group.getChildren().add(initializeButton);
+
 	}
 
 	private void initDragListener(Scene scene) {
@@ -203,6 +296,15 @@ public class Main extends Application {
 		 //floorEnt.setFrozen(true);
 		 addEntity(floorEnt);
 	}
+
+	/**
+	 * Removes all entities from the game.
+	 */
+	public void clearEntities() {
+		entities.clear();
+		phyEntities.clear();
+		phyEngine.clearEngine();
+	}
 	
 	/**
 	 * Adds an entity to the correct list
@@ -244,6 +346,6 @@ public class Main extends Application {
 		for (Entity e : entities) {
 			e.render(gc, delta);
 		}
-
+		
 	}
 }
