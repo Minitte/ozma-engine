@@ -69,7 +69,6 @@ public class PhysicsEngine {
 				}
 			}
 		}
-		
 	}
 	
 	/**
@@ -181,17 +180,22 @@ public class PhysicsEngine {
 	 * @param cm
 	 */
 	private void positionCorrection(CollisionManifold cm) {
-		float correctionMult = max(cm.getPenDepth() - CORRECTION_SLOP, 0.0f) * CORRECTION_PERCENT;
-		Vector2 correctionVectorA = cm.getNormal().clone();
-		correctionVectorA.linearMutliply(correctionMult);
+		BasicPhysicsEntity a = cm.getEntityA();
+		BasicPhysicsEntity b = cm.getEntityB();
 		
-		Vector2 correctionVectorB = correctionVectorA.clone();
+		PhysicsProperties propA = a.getProperties();
+		PhysicsProperties propB = b.getProperties();
 		
-		correctionVectorA.linearMutliply(cm.getEntityA().getProperties().getInvMass());
-		correctionVectorB.linearMutliply(cm.getEntityB().getProperties().getInvMass());
+		Vector2 a2bDir = b.getPosition().clone().minus(a.getPosition()).Normalize();
 		
-		cm.getEntityA().getPosition().minus(correctionVectorA);
-		cm.getEntityB().getPosition().add(correctionVectorB);
+		float correctionMult = max(cm.getPenDepth() - CORRECTION_SLOP, 0.0f);
+		correctionMult /= propA.getInvMass() + propB.getInvMass();
+		correctionMult *= CORRECTION_PERCENT;
+		
+		Vector2 correctionVel = a2bDir.linearMutliply(correctionMult);
+		
+		a.applyForce(correctionVel.clone().linearMutliply(propA.getInvMass()));
+		b.applyForce(correctionVel.linearMutliply(-1f * propB.getInvMass()));
 	}
 	
 	/**

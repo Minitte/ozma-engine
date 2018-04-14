@@ -290,11 +290,11 @@ public class Main extends Application {
 			 addEntity(new BasicPhysicsEntity(pos, shape, prop));
 		 }
 		 
-//		 Vector2 floorPos = new Vector2(START_WIDTH/2f, START_HEIGHT - 50f);
-//		 Shape floorShape = new RectShape(floorPos, 0f, 60f, 40f);
-//		 BasicPhysicsEntity floorEnt = new BasicPhysicsEntity(floorPos, floorShape, new PhysicsProperties(30f, 0.2f));
-////		 floorEnt.setFrozen(true);
-//		 addEntity(floorEnt);
+		 Vector2 floorPos = new Vector2(START_WIDTH/2f, START_HEIGHT - 50f);
+		 Shape floorShape = new RectShape(floorPos, 0f, 50f, 50f);
+		 BasicPhysicsEntity floorEnt = new BasicPhysicsEntity(floorPos, floorShape, new PhysicsProperties(30f, 0f));
+		 floorEnt.setFrozen(true);
+		 addEntity(floorEnt);
 	}
 
 	/**
