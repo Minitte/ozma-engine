@@ -98,27 +98,36 @@ public class PhysicsEngine {
 	 */
 	private void resolveCollision(BasicPhysicsEntity a, BasicPhysicsEntity b) {
 		
-//		BasicPhysicsEntity a = cm.getEntityA();
-//		BasicPhysicsEntity b = cm.getEntityB();
+		applyCollisionImpluses(a, b);
 		
+		
+	}
+	
+	/**
+	 * Applies basic impluse 
+	 */
+	private void applyCollisionImpluses(BasicPhysicsEntity a, BasicPhysicsEntity b) {
 		PhysicsProperties propA = a.getProperties();
 		PhysicsProperties propB = b.getProperties();
 		
 		Vector2 a2bDir = b.getPosition().clone().minus(a.getPosition()).Normalize();
 		Vector2 b2aDir = a2bDir.clone().linearMutliply(-1f);
 		
+		Vector2 rVelocity = b.getVelocity().clone().add(a.getVelocity());
+		
+		/*
+		 * Push away from each other
+		 */
+		
 		// vector based on the face pointing away from the center of the shape
 		Vector2 faceA = a.getShape().getFaceNormalTowards(a2bDir).clone();
 		Vector2 faceB = b.getShape().getFaceNormalTowards(b2aDir).clone();
-		
-		// Calculate impulse amt
 		
 		// use smaller restitution value
 		float e = propA.getRestitution() < propB.getRestitution() ? propA.getRestitution() : propB.getRestitution();
 		
 		// scalar along normal
-		Vector2 rVelocity = b.getVelocity().clone().add(a.getVelocity());
-		float dirScalar = rVelocity.dot(a2bDir);
+		float dirScalar = rVelocity.dot(a2bDir.getNormal());
 		dirScalar = dirScalar > 0 ? dirScalar : -dirScalar;
 		
 		// impluse
@@ -130,6 +139,41 @@ public class PhysicsEngine {
 		// apply force
 		a.applyForce(faceB.linearMutliply(j * propA.getInvMass()));
 		b.applyForce(faceA.linearMutliply(j * propB.getInvMass()));
+		
+		
+		/*
+		 * Friction
+		 */
+		Vector2 tangent = rVelocity.clone().minus(a2bDir.clone().linearMutliply(rVelocity.dot(a2bDir)));
+		tangent.Normalize();
+		
+		float jt = -rVelocity.dot(a2bDir);
+		jt = jt / (propA.getInvMass() + propB.getInvMass());
+		
+		float jtAbs = jt > 0 ? jt : -jt;
+		
+		// skip if very small.
+		if (jtAbs < 0.0001f) {
+			return;
+		}
+		
+		float fricA = propA.getStaticFriction();
+		float fricB = propB.getStaticFriction();
+		float staticFriction = (float)Math.abs(fricA * fricA + fricB * fricB);
+		
+		Vector2 frictionImpulse;
+		if (jtAbs < j * staticFriction) {
+			frictionImpulse = a2bDir.getNormal().linearMutliply(jt);
+			
+		} else {
+			fricA = propA.getDynamicFriction();
+			fricB = propB.getDynamicFriction();
+			float dynamicFriction = (float)Math.abs(fricA * fricA + fricB * fricB);
+			frictionImpulse = a2bDir.getNormal().linearMutliply(-jt * dynamicFriction);
+		}
+		
+		a.applyForce(frictionImpulse);
+		b.applyForce(frictionImpulse.linearMutliply(-1f));
 	}
 	
 	/**
