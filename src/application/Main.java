@@ -128,18 +128,21 @@ public class Main extends Application {
 
 	/**
 	 * Initializes the game's user interface.
-	 * Currently adds two buttons that spawn a circle and rectangle BasicPhysicsEntity.
 	 * @param group the parent root to add the buttons to
 	 */
 	private void initUserInterface(Group group) {
 
 		// Location of the buttons
 		Vector2 circleButtonLocation = new Vector2(20f, 50f);
-		Vector2 rectangleButtonLocation = new Vector2(20f, 100f);
+		Vector2 rectangleButtonLocation = new Vector2(20f, 80f);
+		Vector2 clearButtonLocation = new Vector2(20f, 110f);
+		Vector2 initializeButtonLocation = new Vector2(20f, 140f);
 
 		// Create the buttons
 		EntityButton circleSpawner = new EntityButton(circleButtonLocation, "Spawn circle");
 		EntityButton rectangleSpawner = new EntityButton(rectangleButtonLocation, "Spawn rectangle");
+		EntityButton clearButton = new EntityButton(clearButtonLocation, "Clear entities");
+		EntityButton initializeButton = new EntityButton(initializeButtonLocation, "Initialize entities");
 
 		// Physics properties
 		PhysicsProperties prop = new PhysicsProperties(5f, 0.5f);
@@ -189,9 +192,26 @@ public class Main extends Application {
 			}
 		});
 
+		// Onclick listener for the clear entities button.
+		clearButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				clearEntities();
+			}
+		});
+
+		// Onclick listener for the initialize entities button.
+		initializeButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				initEntities();
+			}
+		});
+
+
 		// Add the buttons
 		group.getChildren().add(circleSpawner);
 		group.getChildren().add(rectangleSpawner);
+		group.getChildren().add(clearButton);
+		group.getChildren().add(initializeButton);
 
 	}
 
@@ -275,6 +295,15 @@ public class Main extends Application {
 		 BasicPhysicsEntity floorEnt = new BasicPhysicsEntity(floorPos, floorShape, new PhysicsProperties(30f, 0.2f));
 		 //floorEnt.setFrozen(true);
 		 addEntity(floorEnt);
+	}
+
+	/**
+	 * Removes all entities from the game.
+	 */
+	public void clearEntities() {
+		entities.clear();
+		phyEntities.clear();
+		phyEngine.clearEngine();
 	}
 	
 	/**
