@@ -93,6 +93,9 @@ public class PhysicsEngine {
 //		BasicPhysicsEntity a = cm.getEntityA();
 //		BasicPhysicsEntity b = cm.getEntityB();
 		
+		PhysicsProperties propA = a.getProperties();
+		PhysicsProperties propB = b.getProperties();
+		
 		Vector2 a2bDir = b.getPosition().clone().minus(a.getPosition()).Normalize();
 		Vector2 b2aDir = a2bDir.clone().linearMutliply(-1f);
 		
@@ -100,8 +103,23 @@ public class PhysicsEngine {
 		Vector2 faceA = a.getShape().getFaceNormalTowards(a2bDir).clone();
 		Vector2 faceB = b.getShape().getFaceNormalTowards(b2aDir).clone();
 		
-		a.applyForce(faceB.linearMutliply(5f));
-		b.applyForce(faceA.linearMutliply(5f));
+		// Calculate impulse amt
+		
+		// use smaller restitution value
+		float e = propA.getRestitution() < propB.getRestitution() ? propA.getRestitution() : propB.getRestitution();
+		
+		// scalar along normal
+		Vector2 rVelocity = b.getVelocity().clone().minus(a.getVelocity());
+		float dirScalar = a2bDir.dot(rVelocity);
+		dirScalar = dirScalar > 0 ? dirScalar : -dirScalar;
+		
+		// impluse
+		float j = (-(1 + e)) * dirScalar;
+		j /= propA.getInvMass() + propB.getInvMass();
+		
+		// apply force
+		a.applyForce(faceB.linearMutliply(j));
+		b.applyForce(faceA.linearMutliply(j));
 	}
 	
 	/**
