@@ -1,5 +1,6 @@
 package application.physics.shape;
 
+import application.math.Matrix2x2;
 import application.math.Vector2;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -31,7 +32,9 @@ public class RectShape extends Shape {
 	@Override
 	public void render(GraphicsContext gc, float delta) {
 		gc.setStroke(colour);
-		gc.strokeRect(vertices[0].getX(), vertices[0].getY(), width, height);
+		double[][] vert = verticesToDoubleArr();
+
+		gc.strokePolygon(vert[0], vert[1], vertices.length);
 		
 		for (int i = 0; i < faceNormals.length; i++) {
 			Vector2 v = position.clone().add(faceNormals[i].clone().linearMutliply(5f));
@@ -62,12 +65,19 @@ public class RectShape extends Shape {
 	 */
 	private void calculateVertices() {
 		
+		Matrix2x2 rot = new Matrix2x2(angle);
+		
 		vertices = new Vector2[4];
-		vertices[0] = new Vector2(position.getX() - (width / 2f), position.getY() - (height / 2f));
+		vertices[0] = new Vector2(-(width / 2f), -(height / 2f));
 		vertices[2] = vertices[0].clone();
 		vertices[2].add(new Vector2(width, height));
 		vertices[1] = new Vector2(vertices[2].getX(), vertices[0].getY());
 		vertices[3] = new Vector2(vertices[0].getX(), vertices[2].getY());
+		
+		for (int i = 0; i < vertices.length; i++) {
+			vertices[i].multiply(rot);
+			vertices[i].add(position);
+		}
 	}
 	
 	
@@ -110,6 +120,16 @@ public class RectShape extends Shape {
 	public Vector2[] getVertices(int faceIndex) {
 		Vector2[] v = {vertices[faceIndex], vertices[(faceIndex + 1) % vertices.length]};
 		return v;
+	}
+	
+	/* (non-Javadoc)
+	 * @see application.physics.shape.Shape#setAngle(float)
+	 */
+	@Override
+	public void setAngle(float angle) {
+		this.angle = angle;
+		calculateVertices();
+		calulateNormals();
 	}
 	
 	/* (non-Javadoc)

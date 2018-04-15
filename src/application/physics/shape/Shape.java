@@ -154,6 +154,22 @@ public abstract class Shape {
 	}
 	
 	/**
+	 * converts vertices to array for rendering polygon
+	 * @return
+	 */
+	public double[][] verticesToDoubleArr() {
+
+		double[][] vert = new double[2][vertices.length];
+
+		for (int i = 0; i < vertices.length; i++) {
+			vert[0][i] = vertices[i].getX();
+			vert[1][i] = vertices[i].getY();
+		}
+
+		return vert;
+	}
+
+	/**
 	 * Gets the face normal closest to the shape
 	 * @param shape
 	 * @return

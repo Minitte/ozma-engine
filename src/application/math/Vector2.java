@@ -130,6 +130,21 @@ public class Vector2 {
 	}
 	
 	/**
+	 * multiplies both x and y with the matrix
+	 * @param other
+	 * @return returns itself to allow chains of operations
+	 */
+	public Vector2 multiply(Matrix2x2 mat) {
+		float[][] m = mat.getValues();
+		float xOld = x;
+		float yOld = y;
+		x = xOld * m[0][0] + yOld * m[0][1];
+		y = xOld * m[1][0] + yOld * m[1][1];
+		
+		return this;
+	}
+	
+	/**
 	 * divdes both x and y by the given denominator
 	 * @param denominator
 	 * @return returns itself to allow chains of operations
