@@ -18,6 +18,8 @@ public class CollisionManifold {
 	private BasicPhysicsEntity entityB;
 	private float penDepth;
 	private Vector2 normal;
+	private Vector2[] contacts = {new Vector2(), new Vector2()};
+	private int numContact;
 
 	/**
 	 * @param entityA
@@ -84,6 +86,10 @@ public class CollisionManifold {
 		v.minus(a.getPosition());
 		
 		float sum = a.getRadius() + b.getRadius();
+		
+		contacts[0].copy(normal).linearMutliply(a.getRadius()).add(a.getPosition());
+		numContact = 1;
+		
 		return sum - v.getLength();
 	}
 	
@@ -112,6 +118,48 @@ public class CollisionManifold {
 		// absolute value
 		xPen = xPen > 0f ? xPen : -xPen;
 		yPen = yPen > 0f ? yPen : -yPen;
+		
+		// contact points
+		Vector2 a2bDir = b.getPosition().clone().minus(a.getPosition()).Normalize();
+		Vector2 b2aDir = a2bDir.clone().linearMutliply(-1f);
+		
+		Vector2[] verticesA = a.getVertices(a.getFaceIndexTowards(a2bDir));
+		Vector2[] verticesB = b.getVertices(b.getFaceIndexTowards(b2aDir));
+		
+		// get the best 1 or 2
+		float best = -Float.MAX_VALUE;
+		float second = -Float.MAX_VALUE;
+		
+		for (int i = 0; i < verticesA.length; i++) {
+			float dotResult = a2bDir.dot(verticesA[i]);
+			
+			if (dotResult > best) {
+				best = dotResult;
+				contacts[1] = contacts[0]; // move old first to second
+				contacts[0].copy(verticesA[i]);
+			} else if (dotResult > second) {
+				best = dotResult;
+				contacts[1].copy(verticesA[i]);
+			}
+		}
+		
+		for (int i = 0; i < verticesB.length; i++) {
+			float dotResult = a2bDir.dot(verticesB[i]);
+			
+			if (dotResult > best) {
+				best = dotResult;
+				contacts[1] = contacts[0]; // move old first to second
+				contacts[0].copy(verticesB[i]);
+			} else if (dotResult > second) {
+				best = dotResult;
+				contacts[1].copy(verticesB[i]);
+			}
+		}
+		
+		numContact = 2;
+		if (contacts[0].equals(contacts[1])) { // same point!
+			numContact = 1;
+		}
 		
 		return xPen > yPen ? yPen : xPen;
 	}
@@ -154,6 +202,9 @@ public class CollisionManifold {
 		
 //		n.Normalize();
 		
+		contacts[0].copy(normal).linearMutliply(b.getRadius()).add(a.getPosition());
+		numContact = 1;
+		
 		normal = a.getFaceNormalTowards(b.getPosition().clone().minus(a.getPosition())).clone().Normalize();
 		
 		return depth;
@@ -186,5 +237,21 @@ public class CollisionManifold {
 	public Vector2 getNormal() {
 		return normal;
 	}
+
+	/**
+	 * @return the contacts
+	 */
+	public Vector2[] getContacts() {
+		return contacts;
+	}
+
+	/**
+	 * @return the numContact
+	 */
+	public int getNumContact() {
+		return numContact;
+	}
+	
+	
 
 }
