@@ -82,7 +82,7 @@ public class PhysicsEngine {
 				CollisionManifold cm = new CollisionManifold(pot.a, pot.b);
 				
 				if (cm.getPenDepth() > 0) {
-					resolveCollision(cm.getEntityA(), cm.getEntityB());
+					resolveCollision(cm);
 					//positionCorrection(cm);
 				}
 			}
@@ -95,9 +95,10 @@ public class PhysicsEngine {
 	 * Resolves collision between two entities
 	 * @param cm
 	 */
-	private void resolveCollision(BasicPhysicsEntity a, BasicPhysicsEntity b) {
+	private void resolveCollision(CollisionManifold cm) {
 		
-		applyCollisionImpluses(a, b);
+//		applyCollisionImpluses(cm.getEntityA(), cm.getEntityB());
+		applyContactImpulse(cm);
 		
 		
 	}
@@ -105,7 +106,7 @@ public class PhysicsEngine {
 	/**
 	 * Applies basic impluse 
 	 */
-	private void applyCollisionImpluses(BasicPhysicsEntity a, BasicPhysicsEntity b) {
+	private void applyCollisionImpluses(BasicPhysicsEntity a, BasicPhysicsEntity b) {		
 		PhysicsProperties propA = a.getProperties();
 		PhysicsProperties propB = b.getProperties();
 		
@@ -143,6 +144,7 @@ public class PhysicsEngine {
 		/*
 		 * Friction
 		 */
+		
 		Vector2 tangent = rVelocity.clone().minus(a2bDir.clone().linearMutliply(rVelocity.dot(a2bDir)));
 		tangent.Normalize();
 		
@@ -173,6 +175,98 @@ public class PhysicsEngine {
 		
 		a.applyForce(frictionImpulse);
 		b.applyForce(frictionImpulse.linearMutliply(-1f));
+	}
+	
+	private void applyContactImpulse(CollisionManifold cm) {
+		BasicPhysicsEntity a = cm.getEntityA();
+		BasicPhysicsEntity b = cm.getEntityB();
+		
+		PhysicsProperties propA = a.getProperties();
+		PhysicsProperties propB = b.getProperties();
+		
+		Vector2 a2bDir = b.getPosition().clone().minus(a.getPosition()).Normalize();
+		Vector2 b2aDir = a2bDir.clone().linearMutliply(-1f);
+		
+		Vector2[] contacts = cm.getContacts();
+		
+		for (int i = 0; i < cm.getNumContact(); i++) {
+			
+			// radii from center of mass to contact point
+			Vector2 ra = contacts[i].clone().minus(a.getPosition());
+			Vector2 rb = contacts[i].clone().minus(b.getPosition());
+			
+			// relative velocity
+			Vector2 rv = b.getVelocity().clone()
+					.add(Vector2.crossProduct(b.getAngularVelocity(), rb))
+					.minus(a.getVelocity())
+					.minus(Vector2.crossProduct(a.getAngularVelocity(), ra));
+			
+			// relative velocity along normal
+			float contactVel = Math.abs(a2bDir.dot(rv));
+			
+			// radii center to contact cross normal
+			float raCrossNorm = ra.dot(a2bDir);
+			float rbCrossNorm = rb.dot(a2bDir);
+			
+			// inverse mass plus magic
+			float invMassSum = propA.getInvMass() + propB.getInvMass() 
+			+ (raCrossNorm * raCrossNorm) * propA.getInvInteria() 
+			+ (rbCrossNorm * rbCrossNorm) * propB.getInvInteria();
+			
+			// take smaller e
+			float e = propA.getRestitution() < propB.getRestitution() ? propA.getRestitution() : propB.getRestitution();
+			
+			// j value for impulse
+			float j = -(1.0f + e) * contactVel;
+			j /= invMassSum;
+			j /= cm.getNumContact();
+			
+			// apply force
+			a.applyForce(b2aDir.clone().linearMutliply(j * propA.getInvMass()), ra);
+			b.applyForce(b2aDir.clone().linearMutliply(j * propB.getInvMass()), rb);
+			
+			/*
+			 * Friction
+			 */
+			
+			// friction rv
+			rv = b.getVelocity().clone()
+					.add(Vector2.crossProduct(b.getAngularVelocity(), rb))
+					.minus(a.getVelocity())
+					.minus(Vector2.crossProduct(a.getAngularVelocity(), ra));
+			
+			// tangent
+			Vector2 t = rv.clone().minus(a2bDir.clone().linearMutliply(rv.dot(a2bDir)));
+			
+			// tangent magnitude
+			float jt = -rv.dot(t);
+			jt /= invMassSum;
+			jt /= cm.getNumContact();
+			
+			// skip small impulses
+			if (Math.abs(jt) < 0.0001f) {
+				return;
+			}
+			
+			float fricA = propA.getStaticFriction();
+			float fricB = propB.getStaticFriction();
+			float staticFriction = (float)Math.abs(fricA * fricA + fricB * fricB);
+			
+			Vector2 frictionImpulse;
+			if (Math.abs(jt) < j * staticFriction) {
+				frictionImpulse = a2bDir.getNormal().linearMutliply(jt);
+				
+			} else {
+				fricA = propA.getDynamicFriction();
+				fricB = propB.getDynamicFriction();
+				float dynamicFriction = (float)Math.abs(fricA * fricA + fricB * fricB);
+				frictionImpulse = a2bDir.getNormal().linearMutliply(-jt * dynamicFriction);
+			}
+			
+			a.applyForce(frictionImpulse, ra);
+			b.applyForce(frictionImpulse.linearMutliply(-1f), rb);
+			
+		}
 	}
 	
 	/**
