@@ -188,7 +188,7 @@ public class PhysicsEngine {
 		PhysicsProperties propA = a.getProperties();
 		PhysicsProperties propB = b.getProperties();
 		
-		Vector2 a2bDir = b.getPosition().clone().minus(a.getPosition()).Normalize();
+		Vector2 a2bDir = b.getPosition().clone().minus(a.getPosition()).Normalize().getNormal();
 		Vector2 b2aDir = a2bDir.clone().linearMutliply(-1f);
 		
 		Vector2[] contacts = cm.getContacts();
@@ -206,11 +206,11 @@ public class PhysicsEngine {
 					.minus(Vector2.crossProduct(a.getAngularVelocity(), ra));
 			
 			// relative velocity along normal
-			float contactVel = Math.abs(a2bDir.dot(rv));
+			float contactVel = Math.abs(rv.dot(a2bDir));
 			
 			// radii center to contact cross normal
-			float raCrossNorm = ra.dot(a2bDir);
-			float rbCrossNorm = rb.dot(a2bDir);
+			float raCrossNorm = ra.crossProduct(a2bDir);
+			float rbCrossNorm = rb.crossProduct(a2bDir);
 			
 			// inverse mass plus magic
 			float invMassSum = propA.getInvMass() + propB.getInvMass() 
