@@ -226,49 +226,49 @@ public class PhysicsEngine {
 			j /= cm.getNumContact();
 			
 			// apply force
-			a.applyForce(b2aDir.clone().linearMutliply(j * propA.getInvMass()), ra);
-			b.applyForce(b2aDir.clone().linearMutliply(j * propB.getInvMass()), rb);
+			a.applyForce(a2bDir.clone().linearMutliply(j), ra);
+			b.applyForce(b2aDir.clone().linearMutliply(j), rb);
 			
 			/*
 			 * Friction
 			 */
 			
 			// friction rv
-			rv = b.getVelocity().clone()
-					.add(Vector2.crossProduct(b.getAngularVelocity(), rb))
-					.minus(a.getVelocity())
-					.minus(Vector2.crossProduct(a.getAngularVelocity(), ra));
-			
-			// tangent
-			Vector2 t = rv.clone().minus(a2bDir.clone().linearMutliply(rv.dot(a2bDir)));
-			
-			// tangent magnitude
-			float jt = -rv.dot(t);
-			jt /= invMassSum;
-			jt /= cm.getNumContact();
-			
-			// skip small impulses
-			if (Math.abs(jt) < 0.0001f) {
-				return;
-			}
-			
-			float fricA = propA.getStaticFriction();
-			float fricB = propB.getStaticFriction();
-			float staticFriction = (float)Math.abs(fricA * fricA + fricB * fricB);
-			
-			Vector2 frictionImpulse;
-			if (Math.abs(jt) < j * staticFriction) {
-				frictionImpulse = a2bDir.getNormal().linearMutliply(jt);
-				
-			} else {
-				fricA = propA.getDynamicFriction();
-				fricB = propB.getDynamicFriction();
-				float dynamicFriction = (float)Math.abs(fricA * fricA + fricB * fricB);
-				frictionImpulse = a2bDir.getNormal().linearMutliply(-jt * dynamicFriction);
-			}
-			
-			a.applyForce(frictionImpulse, ra);
-			b.applyForce(frictionImpulse.linearMutliply(-1f), rb);
+//			rv = b.getVelocity().clone()
+//					.add(Vector2.crossProduct(b.getAngularVelocity(), rb))
+//					.minus(a.getVelocity())
+//					.minus(Vector2.crossProduct(a.getAngularVelocity(), ra));
+//			
+//			// tangent
+//			Vector2 t = rv.clone().minus(a2bDir.clone().linearMutliply(rv.dot(a2bDir)));
+//			
+//			// tangent magnitude
+//			float jt = -rv.dot(t);
+//			jt /= invMassSum;
+//			jt /= cm.getNumContact();
+//			
+//			// skip small impulses
+//			if (Math.abs(jt) < 0.0001f) {
+//				return;
+//			}
+//			
+//			float fricA = propA.getStaticFriction();
+//			float fricB = propB.getStaticFriction();
+//			float staticFriction = (float)Math.abs(fricA * fricA + fricB * fricB);
+//			
+//			Vector2 frictionImpulse;
+//			if (Math.abs(jt) < j * staticFriction) {
+//				frictionImpulse = a2bDir.getNormal().linearMutliply(jt);
+//				
+//			} else {
+//				fricA = propA.getDynamicFriction();
+//				fricB = propB.getDynamicFriction();
+//				float dynamicFriction = (float)Math.abs(fricA * fricA + fricB * fricB);
+//				frictionImpulse = a2bDir.getNormal().linearMutliply(-jt * dynamicFriction);
+//			}
+//			
+//			a.applyForce(frictionImpulse, ra);
+//			b.applyForce(frictionImpulse.linearMutliply(-1f), rb);
 			
 		}
 	}

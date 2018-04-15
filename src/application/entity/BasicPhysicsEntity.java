@@ -26,7 +26,7 @@ public class BasicPhysicsEntity extends Entity {
 	public void update(float delta) {
 		
 		if (!frozen) {
-			velocity.add(new Vector2(0f, 2f));
+			//velocity.add(new Vector2(0f, 2f));
 			Vector2 scaledVelocity = velocity.clone();
 			scaledVelocity.linearMutliply(delta);
 			
@@ -55,6 +55,12 @@ public class BasicPhysicsEntity extends Entity {
 	@Override
 	public void render(GraphicsContext gc, float delta) {
 		shape.render(gc, delta);
+		gc.strokeText(String.format("P: (%d, %d)%nA: %2f%nVl: (%d, %d)%nVa: %d", 
+				(int)position.getX(), (int)position.getY(), 
+				shape.getAngle(),
+				(int)velocity.getX(), (int)velocity.getY(),
+				(int)angularVelocity), 
+				position.getX() + 10f, position.getY() - 10f);
 	}
 	
 	@Override

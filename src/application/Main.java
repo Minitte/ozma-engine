@@ -64,7 +64,7 @@ public class Main extends Application {
 
 		entities = new ArrayList<>();
 		phyEntities = new ArrayList<>();
-		initEntities();
+		//initEntities();
 
 		phyEngine = new PhysicsEngine(phyEntities);
 

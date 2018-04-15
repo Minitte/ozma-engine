@@ -194,7 +194,7 @@ public class Vector2 {
 	 */
 	public boolean equals(Vector2 other) {
 		Vector2 diff = clone().minus(other);
-		return Math.abs(diff.x) > 0.001f && Math.abs(diff.y) > 0.001f;
+		return Math.abs(diff.x) < 0.001f && Math.abs(diff.y) < 0.001f;
 	}
 	
 	/**

@@ -18,8 +18,8 @@ public class PhysicsProperties {
 	private float dynamicFriction;
 	
 	// inertia
-	private float interia;
-	private float invInteria;
+	private float interia = 1f;
+	private float invInteria = 1f;
 
 	/**
 	 * @param mass
