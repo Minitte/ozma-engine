@@ -49,12 +49,15 @@ public class RectShape extends Shape {
 	
 	@Override
 	public boolean pointWithin(Vector2 point) {
-		if (vertices[0].getX() > point.getX() || point.getX() > vertices[2].getX()) {
-			return false;
-		}
+		Vector2 toPoint = point.clone().minus(position).Normalize();
+		float dotPt = toPoint.dot(point);
 		
-		if (vertices[0].getY() > point.getY() || point.getY() > vertices[2].getY()) {
-			return false;
+		for (int i = 0 ; i < vertices.length; i++) {
+			float dotVert = toPoint.dot(vertices[i]);
+			
+			if (dotPt < dotVert) {
+				return false;
+			}
 		}
 		
 		return true;
