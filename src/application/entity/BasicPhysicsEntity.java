@@ -9,6 +9,7 @@ public class BasicPhysicsEntity extends Entity {
 	private Shape shape;
 	private PhysicsProperties properties;
 	private boolean frozen;
+	private float angularVelocity;
 
 	/**
 	 * @param position
@@ -65,6 +66,16 @@ public class BasicPhysicsEntity extends Entity {
 	public void applyForce(Vector2 force) {
 		velocity.add(force);
 	}
+	
+	/**
+	 * Applies a force at a point in the entity caussing a rotation
+	 * @param force
+	 * @param point
+	 */
+	public void applyForce(Vector2 force, Vector2 point) {
+		velocity.add(force.clone().linearMutliply(properties.getInvMass()));
+		angularVelocity += properties.getInvInteria() * point.crossProduct(force);
+	}
 
 	/**
 	 * @return the shape
@@ -109,6 +120,21 @@ public class BasicPhysicsEntity extends Entity {
 	public void setFrozen(boolean frozen) {
 		this.frozen = frozen;
 	}
+
+	/**
+	 * @return the angularVelocity
+	 */
+	public float getAngularVelocity() {
+		return angularVelocity;
+	}
+
+	/**
+	 * @param angularVelocity the angularVelocity to set
+	 */
+	public void setAngularVelocity(float angularVelocity) {
+		this.angularVelocity = angularVelocity;
+	}
+	
 	
 	
 
