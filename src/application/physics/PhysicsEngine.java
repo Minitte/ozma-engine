@@ -177,6 +177,10 @@ public class PhysicsEngine {
 		b.applyForce(frictionImpulse.linearMutliply(-1f));
 	}
 	
+	/**
+	 * applies impulse with contact points
+	 * @param cm
+	 */
 	private void applyContactImpulse(CollisionManifold cm) {
 		BasicPhysicsEntity a = cm.getEntityA();
 		BasicPhysicsEntity b = cm.getEntityB();

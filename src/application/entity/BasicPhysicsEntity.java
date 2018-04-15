@@ -40,6 +40,9 @@ public class BasicPhysicsEntity extends Entity {
 			
 			position.add(scaledVelocity);
 			shape.moveTo(position);
+			
+			// rotate
+			shape.setAngle(shape.getAngle() + (angularVelocity * delta));
 		}
 		
 		// apply damping effects
