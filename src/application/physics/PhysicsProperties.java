@@ -24,7 +24,11 @@ public class PhysicsProperties {
 	public PhysicsProperties(float mass, float restitutionl) {
 		super();
 		this.mass = mass;
-		invMass = 1f / mass;
+		if (mass != 0) {
+			invMass = 1f / mass;
+		} else {
+			invMass = 0;
+		}
 		this.restitution = restitutionl;
 	}
 
@@ -41,7 +45,11 @@ public class PhysicsProperties {
 	 */
 	public void setMass(float mass) {
 		this.mass = mass;
-		invMass = 1f / mass;
+		if (mass != 0) {
+			invMass = 1f / mass;
+		} else {
+			invMass = 0;
+		}
 	}
 
 	/**
@@ -109,13 +117,5 @@ public class PhysicsProperties {
 	 */
 	public void setDynamicFriction(float dynamicFriction) {
 		this.dynamicFriction = dynamicFriction;
-	}
-
-	/**
-	 * @param invMass
-	 *            the invMass to set
-	 */
-	public void setInvMass(float invMass) {
-		this.invMass = invMass;
 	}
 }

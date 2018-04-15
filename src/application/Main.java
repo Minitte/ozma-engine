@@ -285,14 +285,18 @@ public class Main extends Application {
 			 }
 			 
 			 PhysicsProperties prop = new PhysicsProperties(5f, 0.1f);
-			 prop.setVelocityDamping(1.0f);
+			 prop.setDynamicFriction(0.2f);
+			 prop.setStaticFriction(0.4f);
 			 
 			 addEntity(new BasicPhysicsEntity(pos, shape, prop));
 		 }
 		 
 		 Vector2 floorPos = new Vector2(START_WIDTH/2f, START_HEIGHT - 50f);
 		 Shape floorShape = new RectShape(floorPos, 0f, 50f, 50f);
-		 BasicPhysicsEntity floorEnt = new BasicPhysicsEntity(floorPos, floorShape, new PhysicsProperties(30f, 0f));
+		 PhysicsProperties floorProp = new PhysicsProperties(0, 0f);
+		 floorProp.setDynamicFriction(0f);
+		 floorProp.setStaticFriction(0f);
+		 BasicPhysicsEntity floorEnt = new BasicPhysicsEntity(floorPos, floorShape, floorProp);
 		 floorEnt.setFrozen(true);
 		 addEntity(floorEnt);
 	}
