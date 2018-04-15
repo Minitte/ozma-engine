@@ -16,6 +16,10 @@ public class PhysicsProperties {
 	// friction
 	private float staticFriction;
 	private float dynamicFriction;
+	
+	// inertia
+	private float interia;
+	private float invInteria;
 
 	/**
 	 * @param mass
@@ -118,4 +122,32 @@ public class PhysicsProperties {
 	public void setDynamicFriction(float dynamicFriction) {
 		this.dynamicFriction = dynamicFriction;
 	}
+
+	/**
+	 * @return the interia
+	 */
+	public float getInteria() {
+		return interia;
+	}
+
+	/**
+	 * @param interia the interia to set
+	 */
+	public void setInteria(float interia) {
+		this.interia = interia;
+		if (interia != 0) {
+			invInteria = 1f / interia;
+		} else {
+			invInteria = 0;
+		}
+	}
+
+	/**
+	 * @return the invInteria
+	 */
+	public float getInvInteria() {
+		return invInteria;
+	}
+	
+	
 }
