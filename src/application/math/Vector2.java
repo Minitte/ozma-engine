@@ -30,6 +30,33 @@ public class Vector2 {
 	public float dot(Vector2 other) {
 		return (x * other.x) + (y * other.y);
 	}
+	
+	/**
+	 * Cross product between two vector2
+	 * @param other
+	 * @return
+	 */
+	public float crossProduct(Vector2 other) {
+		return (x * other.y) - (y * other.x);
+	}
+	
+	/**
+	 * Crossproduct with a single float, returns a new vector with result
+	 * @param s
+	 * @return
+	 */
+	public static Vector2 crossProduct(Vector2 v, float s) {
+		return new Vector2(s * v.y, -s * v.x);
+	}
+	
+	/**
+	 * Crossproduct with a single float, returns a new vector with result
+	 * @param s
+	 * @return
+	 */
+	public static Vector2 crossProduct(float s, Vector2 v) {
+		return new Vector2(-s * v.y, s * v.x);
+	}
 
 	/**
 	 * Adds another vector to this vector
@@ -131,6 +158,28 @@ public class Vector2 {
 	 */
 	public Vector2 clone() {
 		return new Vector2(x, y);
+	}
+	
+	/**
+	 * Copies the values from source vector
+	 * @param src
+	 * @return returns itself to allow chains of operations 
+	 */
+	public Vector2 copy(Vector2 src) {
+		x = src.x;
+		y = src.y;
+		
+		return this;
+	}
+	
+	/**
+	 * if both are within 0.0001 of each other..
+	 * @param other
+	 * @return
+	 */
+	public boolean equals(Vector2 other) {
+		Vector2 diff = clone().minus(other);
+		return Math.abs(diff.x) > 0.001f && Math.abs(diff.y) > 0.001f;
 	}
 	
 	/**
