@@ -70,6 +70,7 @@ public class RectShape extends Shape {
 		vertices[3] = new Vector2(vertices[0].getX(), vertices[2].getY());
 	}
 	
+	
 	/* (non-Javadoc)
 	 * @see application.physics.shape.Shape#moveTo(application.math.Vector2)
 	 */
@@ -99,6 +100,16 @@ public class RectShape extends Shape {
 		}
 		
 		return best;
+	}
+	
+	/**
+	 * Gets the two vertices of the face normal
+	 * @param face
+	 * @return
+	 */
+	public Vector2[] getVertices(int faceIndex) {
+		Vector2[] v = {vertices[faceIndex], vertices[(faceIndex + 1) % vertices.length]};
+		return v;
 	}
 	
 	/* (non-Javadoc)
