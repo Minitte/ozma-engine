@@ -23,20 +23,28 @@ public class BasicPhysicsEntity extends Entity {
 
 	@Override
 	public void update(float delta) {
-		if (frozen) {
-			velocity.linearMutliply(0f);
+		
+		if (!frozen) {
+			velocity.add(new Vector2(0f, 2f));
+			Vector2 scaledVelocity = velocity.clone();
+			scaledVelocity.linearMutliply(delta);
+			
+			if (Math.abs(scaledVelocity.getX()) < 0.0001f) {
+				scaledVelocity.setX(0f);
+			}
+			
+			if (Math.abs(scaledVelocity.getY()) < 0.0001f) {
+				scaledVelocity.setY(0f);
+			}
+			
+			position.add(scaledVelocity);
+			shape.moveTo(position);
 		}
 		
-		//velocity.add(new Vector2(0f, 5f));
-		Vector2 scaledVelocity = velocity.clone();
-		scaledVelocity.linearMutliply(delta);
-		position.add(scaledVelocity);
-		shape.moveTo(position);
-
 		// apply damping effects
-		Vector2 dampingVector = new Vector2(properties.getVelocityDamping(), properties.getVelocityDamping());
-		dampingVector.linearMutliply(delta);
-		velocity.reduce(dampingVector);
+//		Vector2 dampingVector = new Vector2(properties.getVelocityDamping(), properties.getVelocityDamping());
+//		dampingVector.linearMutliply(delta);
+//		velocity.reduce(dampingVector);
 
 	}
 

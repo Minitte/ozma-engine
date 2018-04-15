@@ -1,5 +1,9 @@
 package application;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import application.entity.BasicPhysicsEntity;
 import application.entity.Entity;
 import application.math.Vector2;
@@ -21,10 +25,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 public class Main extends Application {
 
@@ -284,16 +284,20 @@ public class Main extends Application {
 //				 continue;
 			 }
 			 
-			 PhysicsProperties prop = new PhysicsProperties(5f, 0.5f);
-			 prop.setVelocityDamping(1.0f);
+			 PhysicsProperties prop = new PhysicsProperties(5f, 0.1f);
+			 prop.setDynamicFriction(0.2f);
+			 prop.setStaticFriction(0.4f);
 			 
 			 addEntity(new BasicPhysicsEntity(pos, shape, prop));
 		 }
 		 
 		 Vector2 floorPos = new Vector2(START_WIDTH/2f, START_HEIGHT - 50f);
-		 Shape floorShape = new RectShape(floorPos, 0f, 60f, 40f);
-		 BasicPhysicsEntity floorEnt = new BasicPhysicsEntity(floorPos, floorShape, new PhysicsProperties(30f, 0.2f));
-		 //floorEnt.setFrozen(true);
+		 Shape floorShape = new RectShape(floorPos, 0f, 50f, 50f);
+		 PhysicsProperties floorProp = new PhysicsProperties(0, 0f);
+		 floorProp.setDynamicFriction(0f);
+		 floorProp.setStaticFriction(0f);
+		 BasicPhysicsEntity floorEnt = new BasicPhysicsEntity(floorPos, floorShape, floorProp);
+		 floorEnt.setFrozen(true);
 		 addEntity(floorEnt);
 	}
 
