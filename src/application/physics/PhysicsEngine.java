@@ -46,10 +46,11 @@ public class PhysicsEngine {
 	/**
 	 * Performs collision checks and resolves them
 	 */
-	public void update(boolean parallel) {
+	public void update(float delta) {
 		
 		findPotentialCollisions();
 		findActualCollisions();
+		updatePhysics(delta);
 	}
 	
 	/**
@@ -60,6 +61,10 @@ public class PhysicsEngine {
 			BasicPhysicsEntity a = entities.get(i);
 			for (int j = i + 1; j < entities.size(); j++) {
 				BasicPhysicsEntity b = entities.get(j);
+				
+				if (a.isFrozen() && b.isFrozen()) {
+					continue;
+				}
 				
 				float dist = b.getPosition().clone().minus(a.getPosition()).getLengthSquared();
 				float rsq = a.getShape().getLooseCheckRadius() + b.getShape().getLooseCheckRadius();
@@ -90,6 +95,19 @@ public class PhysicsEngine {
 		
 		potentialCollisions.clear();
 	}
+	
+	/**
+	 * Physics step
+	 */
+	private void updatePhysics(float delta) {
+		for (int i = 0; i < entities.size(); i++) {
+			if (entities.get(i).isFrozen()) {
+				entities.get(i).setVelocity(new Vector2());
+			} else {
+				entities.get(i).physicsUpdate(delta);
+			}
+		}
+	}
 
 	/**
 	 * Resolves collision between two entities
@@ -97,8 +115,8 @@ public class PhysicsEngine {
 	 */
 	private void resolveCollision(CollisionManifold cm) {
 		
-//		applyCollisionImpluses(cm.getEntityA(), cm.getEntityB());
-		applyContactImpulse(cm);
+		applyCollisionImpluses(cm.getEntityA(), cm.getEntityB());
+		//applyContactImpulse(cm);
 		
 		
 	}

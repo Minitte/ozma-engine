@@ -64,7 +64,7 @@ public class Main extends Application {
 
 		entities = new ArrayList<>();
 		phyEntities = new ArrayList<>();
-		//initEntities();
+		makeTerrain();
 
 		phyEngine = new PhysicsEngine(phyEntities);
 
@@ -290,15 +290,33 @@ public class Main extends Application {
 			 
 			 addEntity(new BasicPhysicsEntity(pos, shape, prop));
 		 }
-		 
-		 Vector2 floorPos = new Vector2(START_WIDTH/2f, START_HEIGHT - 50f);
-		 Shape floorShape = new RectShape(floorPos, 0f, 50f, 50f);
-		 PhysicsProperties floorProp = new PhysicsProperties(0, 0f);
-		 floorProp.setDynamicFriction(0f);
-		 floorProp.setStaticFriction(0f);
-		 BasicPhysicsEntity floorEnt = new BasicPhysicsEntity(floorPos, floorShape, floorProp);
-		 floorEnt.setFrozen(true);
-		 addEntity(floorEnt);
+	}
+	
+	private void makeTerrain() {
+		Random rand = new Random();
+		
+		for (int i = 0 ; i < 20; i++) {
+			Vector2 pos = new Vector2(i * 50, (float)((Math.sin(i * 50 /250.0)*300) + 360));
+			 
+			 Shape shape = null;
+			 
+			 if (i % 2 == 0) {
+				 shape = new CircleShape(pos, 0f, 50f);
+			 } else {
+				 shape = new RectShape(pos, (float)Math.PI / rand.nextFloat(), 50f, 50f);
+//				 continue;
+			 }
+			 
+			 PhysicsProperties prop = new PhysicsProperties(5f, 0.1f);
+			 prop.setDynamicFriction(0.2f);
+			 prop.setStaticFriction(0.4f);
+			 
+			 BasicPhysicsEntity ent = new BasicPhysicsEntity(pos, shape, prop);
+			 ent.setFrozen();
+			 
+			 addEntity(ent);
+		}
+		
 	}
 
 	/**
@@ -329,7 +347,7 @@ public class Main extends Application {
 	 *            milliseconds between last update
 	 */
 	public void update(float delta) {
-		phyEngine.update(true);
+		phyEngine.update(delta);
 		
 		for (Entity e : entities) {
 			e.update(delta);
