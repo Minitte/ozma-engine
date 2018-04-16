@@ -340,7 +340,7 @@ public class Main extends Application {
 		float spread = 0.5f;
 
 		// Number of iterations to simulate the splashes, larger values = more smooth
-		for(int j = 0; j < 1; j++) {
+		for(int j = 0; j < 8; j++) {
 
 			// Calculate deltas between each spring and its neighbours
 			for(int i = 0; i < totalSprings; i++) {
