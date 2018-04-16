@@ -20,6 +20,10 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -466,6 +470,11 @@ public class Main extends Application {
 	 * @param gc the graphics context
 	 */
 	public void renderWater(GraphicsContext gc) {
+
+		Stop[] stops = new Stop[] { new Stop(0, Color.BLUE), new Stop( 1, Color.BLACK)};
+		LinearGradient color = new LinearGradient(0, WaterEntity.waterSurface, 0, START_HEIGHT, false, CycleMethod.NO_CYCLE, stops);
+		gc.setFill(color);
+
 		for (int i = 0; i < waterEntities.size() - 1; i++) {
 			double[] xPoints = new double[]{(int) waterEntities.get(i).getPosition().getX(), (int) waterEntities.get(i + 1).getPosition().getX(),
 					(int) waterEntities.get(i + 1).getPosition().getX(), (int) waterEntities.get(i).getPosition().getX()};
