@@ -1,11 +1,8 @@
 package application;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import application.entity.BasicPhysicsEntity;
 import application.entity.Entity;
+import application.entity.WaterEntity;
 import application.math.Vector2;
 import application.physics.PhysicsEngine;
 import application.physics.PhysicsProperties;
@@ -26,6 +23,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class Main extends Application {
 
 	public static final int START_WIDTH = 1280;
@@ -36,11 +37,14 @@ public class Main extends Application {
 	public static final double FRAME_DISPLAY_RATE = 10;
 	public static final String APP_NAME = "ozma engine";
 
+	public static final int totalSprings = 50;
+
 	private float updateDelta, frameDelta;
 	private long lastFrame, lastUpdate;
 	
 	private List<Entity> entities;
 	private List<BasicPhysicsEntity> phyEntities;
+	private List<WaterEntity> waterEntities;
 	private PhysicsEngine phyEngine;
 	
 	private Entity selected;
@@ -64,7 +68,9 @@ public class Main extends Application {
 
 		entities = new ArrayList<>();
 		phyEntities = new ArrayList<>();
+		waterEntities = new ArrayList<>();
 		initEntities();
+		initWater();
 
 		phyEngine = new PhysicsEngine(phyEntities);
 
@@ -302,6 +308,69 @@ public class Main extends Application {
 	}
 
 	/**
+	 * Initializes the water entities.
+	 */
+	private void initWater() {
+		for(int n = 0; n <= totalSprings; n++) {
+
+			// Factor over total number of springs to get screen width position
+			float t = (float) n / (float) totalSprings;
+
+			// Add the entity
+			waterEntities.add( new WaterEntity(new Vector2(t * START_WIDTH, WaterEntity.waterSurface)));
+		}
+	}
+
+	/**
+	 * Updates the water entities.
+	 * @param delta time since last frame
+	 */
+	private void updateWater(float delta) {
+
+		// Call update function on each water entity
+		for (WaterEntity we : waterEntities) {
+			we.update(delta);
+		}
+
+		// For storing the height deltas
+		float[] leftDeltas = new float[totalSprings];
+		float[] rightDeltas = new float[totalSprings];
+
+		// How fast the waves spread, larger values = faster spread
+		float spread = 0.5f;
+
+		// Number of iterations to simulate the splashes, larger values = more smooth
+		for(int j = 0; j < 1; j++) {
+
+			// Calculate deltas between each spring and its neighbours
+			for(int i = 0; i < totalSprings; i++) {
+
+				if(i > 0)
+				{
+					leftDeltas[i] = spread * (waterEntities.get(i).getPosition().getY() - waterEntities.get(i - 1).getPosition().getY());
+					waterEntities.get(i - 1).speed += leftDeltas[i] * delta;
+				}
+
+				if(i < totalSprings - 1) {
+
+					rightDeltas[i] = spread * (waterEntities.get(i).getPosition().getY() - waterEntities.get(i + 1).getPosition().getY());
+					waterEntities.get(i + 1).speed += rightDeltas[i] * delta;
+				}
+			}
+
+			// Set the positions
+			for(int i = 0; i < totalSprings; i++) {
+
+				if(i > 0)
+					waterEntities.get(i - 1).getPosition().add(new Vector2(0, leftDeltas[i] * delta));
+				if(i < totalSprings - 1)
+					waterEntities.get(i + 1).getPosition().add(new Vector2(0, rightDeltas[i] * delta));
+
+			}
+		}
+	}
+
+	/**
 	 * Removes all entities from the game.
 	 */
 	public void clearEntities() {
@@ -322,6 +391,9 @@ public class Main extends Application {
 		}
 	}
 
+	// Random splashing for testing purposes
+	static int x = 0;
+
 	/**
 	 * Update loop for updating data of objects
 	 * 
@@ -329,11 +401,22 @@ public class Main extends Application {
 	 *            milliseconds between last update
 	 */
 	public void update(float delta) {
-		phyEngine.update(true);
-		
+
+		// Random splashing for testing purposes
+		x++;
+		Random rand = new Random();
+		if (x == 120) {
+			int test = rand.nextInt(totalSprings);
+			waterEntities.get(test).speed += 50;
+
+			x = 0;
+		}
+
 		for (Entity e : entities) {
 			e.update(delta);
 		}
+
+		updateWater(delta);
 	}
 
 	/**
@@ -350,6 +433,21 @@ public class Main extends Application {
 		for (Entity e : entities) {
 			e.render(gc, delta);
 		}
-		
+
+		renderWater(gc);
+	}
+
+	/**
+	 * Renders the water.
+	 * @param gc the graphics context
+	 */
+	public void renderWater(GraphicsContext gc) {
+		for (int i = 0; i < waterEntities.size() - 1; i++) {
+			double[] xPoints = new double[]{(int) waterEntities.get(i).getPosition().getX(), (int) waterEntities.get(i + 1).getPosition().getX(),
+					(int) waterEntities.get(i + 1).getPosition().getX(), (int) waterEntities.get(i).getPosition().getX()};
+			double[] yPoints = new double[]{(int) waterEntities.get(i).getPosition().getY(), (int) waterEntities.get(i + 1).getPosition().getY(), START_HEIGHT, START_HEIGHT};
+
+			gc.fillPolygon(xPoints, yPoints, 4);
+		}
 	}
 }

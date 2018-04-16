@@ -10,12 +10,13 @@ public class WaterEntity extends Entity {
     public static float k = 0.025f;
 
     // Dampening factor
-    public static float dampening = 0.025f;
+    public static float dampening = 0.05f;
 
     // The natural height of the water
     public static float waterSurface = Main.START_HEIGHT - 200;
 
-    private float positionY, velocityY;
+    // Current speed of the water
+    public float speed;
 
     /**
      * Constructor.
@@ -27,24 +28,28 @@ public class WaterEntity extends Entity {
 
     @Override
     public void update(float delta) {
-        // Springs cannot move horizontally, so only use vertical components
-        positionY = position.getY();
-        velocityY = velocity.getY();
 
-        // Difference between this height and the natural height
-        float heightDiff = positionY - waterSurface;
+        // Difference in current height and natural height
+        float y = waterSurface - position.getY();
 
-        // Acceleration = -(k/m)x - dv, ignoring mass
-        float acceleration = -k * heightDiff - dampening * velocityY;
+        // Multiply by spring constant
+        y *= k;
 
-        // Update position and velocity
-        position.add(velocity);
-        velocity.add(new Vector2(0, acceleration));
+        // Apply dampening based on direction to go
+        if(speed > 0) {
+            y -= dampening;
+        } else {
+            y += dampening;
+        }
+
+        // Apply speed
+        speed += y;
+        position.add(new Vector2(0, speed));
     }
 
     @Override
     public void render(GraphicsContext gc, float delta) {
-
+        // Do nothing
     }
 
     @Override
