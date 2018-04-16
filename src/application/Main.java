@@ -310,7 +310,7 @@ public class Main extends Application {
 		 floorProp.setStaticFriction(0f);
 		 BasicPhysicsEntity floorEnt = new BasicPhysicsEntity(floorPos, floorShape, floorProp);
 		 floorEnt.setFrozen(true);
-		 addEntity(floorEnt);
+		 //addEntity(floorEnt);
 	}
 
 	/**
@@ -414,7 +414,7 @@ public class Main extends Application {
 	 */
 	public void update(float delta) {
 
-		//phyEngine.update(true);
+		phyEngine.update(true);
 
 		for (Entity e : entities) {
 			e.update(delta);

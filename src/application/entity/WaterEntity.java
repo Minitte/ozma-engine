@@ -7,7 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 public class WaterEntity extends Entity {
 
     // Spring constant
-    public static float k = 0.025f;
+    public static float k = 0.03f;
 
     // Dampening factor
     public static float dampening = 0.05f;
