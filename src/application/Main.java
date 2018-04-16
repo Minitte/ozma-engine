@@ -75,7 +75,7 @@ public class Main extends Application {
 		phyEntities = new ArrayList<>();
 		waterEntities = new ArrayList<>();
 		alreadySplashed = new ArrayList<>();
-		initEntities();
+		//initEntities();
 		initWater();
 
 		phyEngine = new PhysicsEngine(phyEntities);
