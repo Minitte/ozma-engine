@@ -45,6 +45,7 @@ public class Main extends Application {
 	private List<Entity> entities;
 	private List<BasicPhysicsEntity> phyEntities;
 	private List<WaterEntity> waterEntities;
+	private List<BasicPhysicsEntity> alreadySplashed;
 	private PhysicsEngine phyEngine;
 	
 	private Entity selected;
@@ -69,6 +70,7 @@ public class Main extends Application {
 		entities = new ArrayList<>();
 		phyEntities = new ArrayList<>();
 		waterEntities = new ArrayList<>();
+		alreadySplashed = new ArrayList<>();
 		initEntities();
 		initWater();
 
@@ -391,8 +393,14 @@ public class Main extends Application {
 		}
 	}
 
-	// Random splashing for testing purposes
-	static int x = 0;
+	public void splash(WaterEntity spring, BasicPhysicsEntity entity) {
+		spring.speed += entity.getProperties().getMass() * entity.getVelocity().getY() / 50;
+	}
+
+	public boolean roughlyEqual(float first, float second, float epsilon) {
+		return Math.abs(first - second) < epsilon;
+	}
+
 
 	/**
 	 * Update loop for updating data of objects
@@ -402,18 +410,34 @@ public class Main extends Application {
 	 */
 	public void update(float delta) {
 
-		// Random splashing for testing purposes
-		x++;
-		Random rand = new Random();
-		if (x == 120) {
-			int test = rand.nextInt(totalSprings);
-			waterEntities.get(test).speed += 50;
-
-			x = 0;
-		}
+		//phyEngine.update(true);
 
 		for (Entity e : entities) {
 			e.update(delta);
+		}
+
+		for (BasicPhysicsEntity bpe : phyEntities) {
+			if (alreadySplashed.contains(bpe)) {
+				continue;
+			}
+			float xPos = bpe.getPosition().getX();
+			float yPos = bpe.getPosition().getY();
+			float width = 0, height = 0;
+
+			if (bpe.getShape().getShapeType() == CircleShape.TYPE_ID) {
+				width = ((CircleShape)bpe.getShape()).getRadius();
+				height = ((CircleShape)bpe.getShape()).getRadius();
+			} else if (bpe.getShape().getShapeType() == RectShape.TYPE_ID) {
+				width = ((RectShape)bpe.getShape()).getWidth();
+				height = ((RectShape)bpe.getShape()).getHeight();
+			}
+
+			for (WaterEntity we : waterEntities) {
+				if (roughlyEqual(we.getPosition().getX(), xPos, width) && roughlyEqual(we.getPosition().getY(), yPos, height / 2)) {
+					splash(we, bpe);
+					alreadySplashed.add(bpe);
+				}
+			}
 		}
 
 		updateWater(delta);
