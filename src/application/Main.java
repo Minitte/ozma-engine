@@ -37,7 +37,7 @@ public class Main extends Application {
 	public static final double FRAME_DISPLAY_RATE = 10;
 	public static final String APP_NAME = "ozma engine";
 
-	public static final int totalSprings = 50;
+	public static final int totalSprings = 100;
 
 	private float updateDelta, frameDelta;
 	private long lastFrame, lastUpdate;
@@ -313,10 +313,10 @@ public class Main extends Application {
 	 * Initializes the water entities.
 	 */
 	private void initWater() {
-		for(int n = 0; n <= totalSprings; n++) {
+		for(int n = 0; n < totalSprings; n++) {
 
 			// Factor over total number of springs to get screen width position
-			float t = (float) n / (float) totalSprings;
+			float t = (float) n / (float) (totalSprings - 1);
 
 			// Add the entity
 			waterEntities.add( new WaterEntity(new Vector2(t * START_WIDTH, WaterEntity.waterSurface)));
@@ -339,7 +339,7 @@ public class Main extends Application {
 		float[] rightDeltas = new float[totalSprings];
 
 		// How fast the waves spread, larger values = faster spread
-		float spread = 0.5f;
+		float spread = 2f;
 
 		// Number of iterations to simulate the splashes, larger values = more smooth
 		for(int j = 0; j < 8; j++) {
@@ -394,7 +394,7 @@ public class Main extends Application {
 	}
 
 	public void splash(WaterEntity spring, BasicPhysicsEntity entity) {
-		spring.speed += entity.getProperties().getMass() * entity.getVelocity().getY() / 50;
+		spring.speed += entity.getProperties().getMass() * entity.getVelocity().getY() / 100;
 	}
 
 	public boolean roughlyEqual(float first, float second, float epsilon) {
